@@ -27,6 +27,15 @@ h1,h2,h3{font-family:'Fraunces',serif;font-weight:300;}
 .meal-day-note { font-size:12px; color:var(--text3); margin-bottom:1.25rem; padding:8px 12px; background:var(--bg3); border-radius:6px; border:1px solid var(--border); }
 .today-badge { display:inline-block; font-size:10px; font-family:'DM Mono',monospace; color:var(--text3); background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:1px 7px; margin-left:8px; vertical-align:middle; }
 
+
+/* CARDIO SELECTOR */
+.cardio-opts { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.cardio-opt { padding:6px 14px; border-radius:var(--r); border:1px solid var(--border2); font-size:12px; font-weight:500; color:var(--text2); cursor:pointer; background:none; font-family:'DM Sans',sans-serif; transition:all 0.15s; display:flex; align-items:center; gap:6px; }
+.cardio-opt:hover { border-color:var(--text2); color:var(--text); }
+.cardio-opt.active { background:var(--card2); color:var(--text); border-color:var(--border2); }
+.cardio-detail { background:var(--bg3); border-radius:var(--r); padding:10px 12px; margin-bottom:4px; }
+.cardio-pick-hint { font-size:12px; color:var(--text3); font-style:italic; padding:8px 12px; }
+
 /* LIFT INPUT */
 .lift-input-section { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
 .lift-input-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
@@ -410,8 +419,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
 // ── Supabase config ──────────────────────────────────────────
 // After creating your Supabase project, paste your values below.
 // Settings → API → Project URL and anon public key.
-var SUPABASE_URL = 'https://lwdegmgosiqxlehirxyy.supabase.co';
-var SUPABASE_KEY = 'sb_publishable_aCMjgrHtzoCqDuXG-Ms7_w_DGUmM27c';
+var SUPABASE_URL = 'PASTE_YOUR_PROJECT_URL_HERE';
+var SUPABASE_KEY = 'PASTE_YOUR_ANON_PUBLIC_KEY_HERE';
 var saveTimer = null;
 
 // ============================================================
@@ -722,6 +731,7 @@ var state = {
   shop: {},
   tracker: {},
   lifts: {},
+  cardioSel: {},
   mealOpts: {},
   shopPlan: 'A',
   prepPlan: 'A',
@@ -765,6 +775,7 @@ function loadFromCloud() {
       if (s.shop)        state.shop        = s.shop;
       if (s.tracker)     state.tracker     = s.tracker;
       if (s.lifts)       state.lifts       = s.lifts;
+      if (s.cardioSel)   state.cardioSel   = s.cardioSel;
       if (s.mealOpts)    state.mealOpts    = s.mealOpts;
       if (s.shopPlan)    state.shopPlan    = s.shopPlan;
       if (s.prepPlan)    state.prepPlan    = s.prepPlan;
@@ -859,6 +870,114 @@ var TRACKED_LIFTS = {
     { key:'ohpress',  name:'Seated dumbbell overhead press', type:'upper' },
     { key:'lateral',  name:'Cable lateral raise',            type:'upper' },
     { key:'curl',     name:'Barbell curl + tricep pushdown', type:'upper' }
+  ]
+};
+
+// ============================================================
+// CARDIO OPTIONS — detailed sessions for each selectable cardio
+// dayIndex → array of options, each with label + full steps
+// ============================================================
+var CARDIO_OPTIONS = {
+  1: [ // Tuesday — cardio + abs
+    { label:'Tempo run', icon:'🏃', steps:[
+      {name:'Easy warm-up jog',sets:'10 min · zone 2 · conversational pace'},
+      {name:'Tempo intervals',sets:'4 × 6 min @ comfortably hard (zone 3–4) · 90 sec jog recovery'},
+      {name:'Cool-down jog',sets:'10 min easy · zone 1–2'},
+      {name:'Total',sets:'~45 min'}
+    ]},
+    { label:'Swim session', icon:'🏊', steps:[
+      {name:'Warm-up',sets:'4 × 50m easy · any stroke'},
+      {name:'Catch-up drill',sets:'4 × 50m · focus on stroke timing'},
+      {name:'Pull buoy set',sets:'4 × 100m · upper body endurance'},
+      {name:'Main set',sets:'6 × 75m @ steady effort · 20 sec rest'},
+      {name:'Cool-down',sets:'100m easy backstroke'},
+      {name:'Total',sets:'~1,600m · 40 min'}
+    ]},
+    { label:'Bike intervals', icon:'🚴', steps:[
+      {name:'Easy warm-up spin',sets:'10 min · zone 1–2'},
+      {name:'Intervals',sets:'8 × 2 min hard (zone 4–5) · 2 min easy recovery'},
+      {name:'Cool-down',sets:'10 min easy spin'},
+      {name:'Total',sets:'~50 min'}
+    ]}
+  ],
+  3: [ // Thursday — cardio + abs
+    { label:'Easy run', icon:'🏃', steps:[
+      {name:'Easy zone 2 run',sets:'35–45 min · fully conversational · recovery pace'},
+      {name:'Note',sets:'If legs are sore from Wednesday, keep this very easy or shorten to 25 min'}
+    ]},
+    { label:'Bike intervals', icon:'🚴', steps:[
+      {name:'Easy warm-up spin',sets:'8 min · zone 1–2'},
+      {name:'Intervals',sets:'7 × 2 min hard / 2 min easy · zone 4–5 effort'},
+      {name:'Cool-down',sets:'8 min easy spin'},
+      {name:'Total',sets:'~45 min'}
+    ]},
+    { label:'Swim steady state', icon:'🏊', steps:[
+      {name:'Warm-up',sets:'200m easy'},
+      {name:'Drill set',sets:'4 × 50m technique drills'},
+      {name:'Steady main set',sets:'10 × 100m @ easy effort · 15 sec rest'},
+      {name:'Cool-down',sets:'100m easy'},
+      {name:'Total',sets:'~1,500m · 35–40 min'}
+    ]}
+  ],
+  0: [ // Monday — cardio finisher only
+    { label:'Rowing machine intervals', icon:'🚣', steps:[
+      {name:'Intervals',sets:'10 × 1 min hard / 1 min easy · damper 5–6'},
+      {name:'Total',sets:'20 min'}
+    ]},
+    { label:'Bike intervals', icon:'🚴', steps:[
+      {name:'Intervals',sets:'10 × 1 min hard / 1 min easy · zone 4'},
+      {name:'Total',sets:'20 min'}
+    ]},
+    { label:'Treadmill run', icon:'🏃', steps:[
+      {name:'Steady run',sets:'20 min · zone 2–3 · moderate effort'},
+      {name:'Total',sets:'20 min'}
+    ]}
+  ],
+  4: [ // Friday — cardio finisher only
+    { label:'Easy run', icon:'🏃', steps:[
+      {name:'Steady jog',sets:'20 min · zone 2 · conversational · shake out the legs'},
+      {name:'Total',sets:'20 min'}
+    ]},
+    { label:'Bike easy', icon:'🚴', steps:[
+      {name:'Easy spin',sets:'20 min · zone 1–2 · low resistance'},
+      {name:'Total',sets:'20 min'}
+    ]},
+    { label:'Rowing machine', icon:'🚣', steps:[
+      {name:'Steady row',sets:'20 min · moderate pace · zone 2'},
+      {name:'Total',sets:'20 min'}
+    ]}
+  ],
+  5: [ // Saturday — long endurance
+    { label:'Long ride', icon:'🚴', steps:[
+      {name:'Easy warm-up spin',sets:'15 min · zone 1–2 · loosen the legs'},
+      {name:'Main ride — steady state',sets:'60–90 min · zone 2–3 · hold a conversation but working'},
+      {name:'Optional surges',sets:'2–3 × 3 min at zone 4 effort · spaced evenly through the ride'},
+      {name:'Cool-down spin',sets:'10–15 min · zone 1 · easy spin to flush legs'},
+      {name:'Total',sets:'90–120 min · fuel every 45 min with carbs · electrolytes throughout'},
+      {name:'Every 3rd Saturday',sets:'Add 15–20 min easy brick run immediately off the bike · zone 2 only'}
+    ]},
+    { label:'Long run', icon:'🏃', steps:[
+      {name:'Easy warm-up walk/jog',sets:'5 min · zone 1'},
+      {name:'Main run — easy aerobic',sets:'50–80 min · fully conversational zone 2 · never pushing'},
+      {name:'Optional strides',sets:'4–6 × 20 sec at 5K effort in the final 10 min · full recovery between'},
+      {name:'Cool-down walk',sets:'5 min · shake out the legs'},
+      {name:'Total',sets:'60–90 min · hydrate every 20–25 min'}
+    ]},
+    { label:'Long ride + brick run', icon:'🏁', steps:[
+      {name:'Easy warm-up spin',sets:'10 min · zone 1–2'},
+      {name:'Main ride',sets:'60–75 min · zone 2–3 steady · simulate race effort'},
+      {name:'Transition',sets:'Rack the bike, change shoes · keep it quick · under 2 min'},
+      {name:'Brick run',sets:'15–20 min · zone 2 · expect heavy legs the first 5 min — that is normal'},
+      {name:'Cool-down walk',sets:'3–5 min easy'},
+      {name:'Total',sets:'~95–110 min · race-specific training · do this every 3rd Saturday'}
+    ]},
+    { label:'Open water swim', icon:'🏊', steps:[
+      {name:'Warm-up',sets:'10 min easy · sight every 6–8 strokes'},
+      {name:'Main set',sets:'30–45 min steady open water swimming · zone 2 · focus on sighting + straight lines'},
+      {name:'Optional surges',sets:'3 × 2 min at race-pace effort · 2 min easy between'},
+      {name:'Cool-down',sets:'5 min easy'},
+      {name:'Total',sets:'45–60 min · great alternative when legs need a break from impact'}
+    ]}
   ]
 };
 var PHASE_WEEKS = [[1,2,3,4],[5,6,7,8],[9,10,11],[12]];
@@ -1035,53 +1154,81 @@ function renderDetailPanel(i) {
   var isPhaseWeek1 = (weekInPhase === 0);
 
   var html = '';
+  var cardioOpts = CARDIO_OPTIONS[i] || null;
+  var cardioSelIdx = (state.cardioSel && state.cardioSel[i] !== undefined) ? state.cardioSel[i] : -1;
+
   day.sections.forEach(function(sec) {
-    html += '<div class="sec-label">' + sec.label + '</div>';
-    sec.exercises.forEach(function(ex) {
-      // Find if this exercise is tracked
-      var tracked = null;
-      if (trackedLifts) {
-        trackedLifts.forEach(function(tl){ if (tl.name === ex.name || ex.name.indexOf(tl.name.split(' ')[0]) !== -1) tracked = tl; });
-      }
+    // Detect if this is a selectable cardio section
+    var isCardioSec = cardioOpts && (
+      sec.label.toLowerCase().indexOf('cardio') !== -1 ||
+      sec.label.toLowerCase().indexOf('choose') !== -1 ||
+      sec.label.toLowerCase().indexOf('finisher') !== -1 ||
+      sec.label.toLowerCase().indexOf('endurance') !== -1 ||
+      sec.label.toLowerCase().indexOf('structure') !== -1
+    );
 
-      if (tracked && !ex.mob) {
-        var proj = null;
-        var inputData = getLiftInput(tracked.key, phaseIdx);
-        if (!isPhaseWeek1 && inputData && inputData.weight) {
-          proj = projectLift(inputData.weight, tracked.type, phaseIdx, weekInPhase);
-        }
-
-        if (isPhaseWeek1) {
-          // Show input fields for week 1 of each phase
-          var savedW = (inputData && inputData.weight) ? inputData.weight : '';
-          var savedR = (inputData && inputData.reps) ? inputData.reps : '';
-          html += '<div class="ex-row" style="flex-direction:column;align-items:stretch;gap:8px;">';
-          html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
-          html += '<span class="ex-name">' + ex.name + '</span>';
-          html += '<span class="ex-sets" style="color:var(--text3);font-size:11px;">Enter your starting weight</span>';
-          html += '</div>';
-          html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
-          html += '<div><div class="lift-col-head">Weight (lbs)</div><input class="lift-input" type="number" placeholder="e.g. 185" value="' + savedW + '" data-lift="' + tracked.key + '" data-phase="' + phaseIdx + '" data-field="weight" min="0" step="2.5"></div>';
-          html += '<div><div class="lift-col-head">Reps achieved</div><input class="lift-input" type="number" placeholder="e.g. 10" value="' + savedR + '" data-lift="' + tracked.key + '" data-phase="' + phaseIdx + '" data-field="reps" min="1" step="1"></div>';
-          html += '</div></div>';
-        } else if (proj) {
-          // Show projected weight for this week
-          html += '<div class="ex-row">';
-          html += '<span class="ex-name">' + ex.name + '</span>';
-          html += '<span class="ex-sets"><span style="color:var(--text);font-weight:500;">' + proj.weight + ' lbs</span> &nbsp;·&nbsp; ' + proj.sets + ' &nbsp;·&nbsp; ' + proj.reps + '</span>';
-          html += '</div>';
-          if (proj.note) html += '<div style="font-size:11px;color:var(--text3);padding:2px 12px 6px;">' + proj.note + '</div>';
-        } else {
-          // No input yet — show prompt
-          html += '<div class="ex-row">';
-          html += '<span class="ex-name">' + ex.name + '</span>';
-          html += '<span class="ex-sets" style="color:var(--text3);font-style:italic;">Enter Week ' + PHASE_WEEKS[phaseIdx][0] + ' weight to see projection</span>';
-          html += '</div>';
-        }
+    if (isCardioSec && cardioOpts) {
+      html += '<div class="sec-label">' + sec.label + '</div>';
+      // Option picker buttons
+      html += '<div class="cardio-opts">';
+      cardioOpts.forEach(function(opt, oi) {
+        html += '<button class="cardio-opt' + (oi === cardioSelIdx ? ' active' : '') + '" data-dayidx="' + i + '" data-optidx="' + oi + '">' + opt.icon + ' ' + opt.label + '</button>';
+      });
+      html += '</div>';
+      // Show selected session detail
+      if (cardioSelIdx >= 0 && cardioOpts[cardioSelIdx]) {
+        var selOpt = cardioOpts[cardioSelIdx];
+        html += '<div class="cardio-detail">';
+        selOpt.steps.forEach(function(step) {
+          html += '<div class="ex-row"><span class="ex-name">' + step.name + '</span><span class="ex-sets">' + step.sets + '</span></div>';
+        });
+        html += '</div>';
       } else {
-        html += '<div class="ex-row"><span class="ex-name">' + ex.name + (ex.mob ? '<span class="mob-pill">mobility</span>' : '') + '</span><span class="ex-sets">' + ex.sets + '</span></div>';
+        html += '<div class="cardio-pick-hint">Tap a cardio option above to see the full session</div>';
       }
-    });
+    } else {
+      html += '<div class="sec-label">' + sec.label + '</div>';
+      sec.exercises.forEach(function(ex) {
+        var tracked = null;
+        if (trackedLifts) {
+          trackedLifts.forEach(function(tl){ if (tl.name === ex.name || ex.name.indexOf(tl.name.split(' ')[0]) !== -1) tracked = tl; });
+        }
+
+        if (tracked && !ex.mob) {
+          var proj = null;
+          var inputData = getLiftInput(tracked.key, phaseIdx);
+          if (!isPhaseWeek1 && inputData && inputData.weight) {
+            proj = projectLift(inputData.weight, tracked.type, phaseIdx, weekInPhase);
+          }
+          if (isPhaseWeek1) {
+            var savedW = (inputData && inputData.weight) ? inputData.weight : '';
+            var savedR = (inputData && inputData.reps) ? inputData.reps : '';
+            html += '<div class="ex-row" style="flex-direction:column;align-items:stretch;gap:8px;">';
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
+            html += '<span class="ex-name">' + ex.name + '</span>';
+            html += '<span class="ex-sets" style="color:var(--text3);font-size:11px;">Enter your starting weight</span>';
+            html += '</div>';
+            html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+            html += '<div><div class="lift-col-head">Weight (lbs)</div><input class="lift-input" type="number" placeholder="e.g. 185" value="' + savedW + '" data-lift="' + tracked.key + '" data-phase="' + phaseIdx + '" data-field="weight" min="0" step="2.5"></div>';
+            html += '<div><div class="lift-col-head">Reps achieved</div><input class="lift-input" type="number" placeholder="e.g. 10" value="' + savedR + '" data-lift="' + tracked.key + '" data-phase="' + phaseIdx + '" data-field="reps" min="1" step="1"></div>';
+            html += '</div></div>';
+          } else if (proj) {
+            html += '<div class="ex-row">';
+            html += '<span class="ex-name">' + ex.name + '</span>';
+            html += '<span class="ex-sets"><span style="color:var(--text);font-weight:500;">' + proj.weight + ' lbs</span> &nbsp;·&nbsp; ' + proj.sets + ' &nbsp;·&nbsp; ' + proj.reps + '</span>';
+            html += '</div>';
+            if (proj.note) html += '<div style="font-size:11px;color:var(--text3);padding:2px 12px 6px;">' + proj.note + '</div>';
+          } else {
+            html += '<div class="ex-row">';
+            html += '<span class="ex-name">' + ex.name + '</span>';
+            html += '<span class="ex-sets" style="color:var(--text3);font-style:italic;">Enter Week ' + PHASE_WEEKS[phaseIdx][0] + ' weight to see projection</span>';
+            html += '</div>';
+          }
+        } else {
+          html += '<div class="ex-row"><span class="ex-name">' + ex.name + (ex.mob ? '<span class="mob-pill">mobility</span>' : '') + '</span><span class="ex-sets">' + ex.sets + '</span></div>';
+        }
+      });
+    }
   });
 
   // Projection summary table (weeks 2+ only, when data entered)
@@ -1346,6 +1493,23 @@ function initUI() {
     state.days[i] = !state.days[i];
     syncDayToTracker(i, state.days[i]);
     save(); renderDayTiles(); renderDetailPanel(i);
+  });
+
+  // Cardio option selector — delegated from detail panel container
+  document.getElementById('detail-body').addEventListener('click', function(e) {
+    var btn = e.target.closest('.cardio-opt');
+    if (!btn) return;
+    var dayIdx = parseInt(btn.dataset.dayidx);
+    var optIdx = parseInt(btn.dataset.optidx);
+    if (!state.cardioSel) state.cardioSel = {};
+    // Toggle off if already selected, otherwise select
+    if (state.cardioSel[dayIdx] === optIdx) {
+      delete state.cardioSel[dayIdx];
+    } else {
+      state.cardioSel[dayIdx] = optIdx;
+    }
+    save();
+    renderDetailPanel(dayIdx);
   });
   document.getElementById('reset-week-btn').addEventListener('click', function() {
     if (!confirm('Reset all day checkboxes for this week?')) return;
