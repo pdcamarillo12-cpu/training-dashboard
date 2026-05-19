@@ -17,6 +17,38 @@
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;min-height:100vh;}
 h1,h2,h3{font-family:'Fraunces',serif;font-weight:300;}
 
+
+
+/* MEAL OPTION TABS */
+.meal-opt-tabs { display:flex; gap:5px; margin-bottom:8px; }
+.meal-opt-tab { padding:4px 12px; border-radius:6px; border:1px solid var(--border); font-size:12px; color:var(--text2); cursor:pointer; background:none; font-family:'DM Sans',sans-serif; transition:all 0.15s; }
+.meal-opt-tab:hover { border-color:var(--border2); color:var(--text); }
+.meal-opt-tab.active { border-color:var(--border2); color:var(--text); background:var(--card2); }
+.meal-day-note { font-size:12px; color:var(--text3); margin-bottom:1.25rem; padding:8px 12px; background:var(--bg3); border-radius:6px; border:1px solid var(--border); }
+.today-badge { display:inline-block; font-size:10px; font-family:'DM Mono',monospace; color:var(--text3); background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:1px 7px; margin-left:8px; vertical-align:middle; }
+
+/* LIFT INPUT */
+.lift-input-section { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+.lift-input-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.lift-input-title { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text3); }
+.lift-input-hint { font-size: 11px; color: var(--text3); font-style: italic; }
+.lift-row { display: grid; grid-template-columns: 1fr 90px 90px; gap: 8px; align-items: center; margin-bottom: 6px; }
+.lift-row-label { font-size: 13px; color: var(--text2); }
+.lift-input { background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 13px; padding: 6px 10px; width: 100%; outline: none; text-align: center; }
+.lift-input:focus { border-color: var(--text2); }
+.lift-input::placeholder { color: var(--text3); }
+.lift-col-head { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); text-align: center; margin-bottom: 4px; }
+.projection-section { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+.proj-header { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text3); margin-bottom: 10px; }
+.proj-table { width: 100%; border-collapse: collapse; }
+.proj-table th { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); padding: 4px 8px; text-align: left; }
+.proj-table td { font-size: 12px; color: var(--text2); padding: 7px 8px; border-top: 1px solid var(--border); }
+.proj-table td:first-child { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); }
+.proj-table tr.current-week td { color: var(--text); background: var(--card2); }
+.proj-table tr.current-week td:first-child { color: var(--text2); }
+.proj-lift-name { font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 500; }
+.proj-block { margin-bottom: 1.25rem; }
+
 /* SYNC BANNER */
 #sync-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;padding:8px 20px;font-size:12px;font-family:'DM Mono',monospace;text-align:center;transition:all 0.3s;display:none;}
 #sync-bar.saving{display:block;background:#1c1c1c;color:var(--text3);border-top:1px solid var(--border);}
@@ -241,12 +273,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
     <div class="leg">· Sun — Rest</div>
   </div>
   <div class="week-grid" id="week-grid">
-    <div class="day-tile" data-day="0"><div class="day-lbl">Mon</div><div class="day-icon">🏋️</div><div class="day-type">Lower body</div><div class="day-check" data-check="0">✓</div></div>
-    <div class="day-tile" data-day="1"><div class="day-lbl">Tue</div><div class="day-icon">💪</div><div class="day-type">Shoulder + run</div><div class="day-check" data-check="1">✓</div></div>
-    <div class="day-tile" data-day="2"><div class="day-lbl">Wed</div><div class="day-icon">🏃</div><div class="day-type">Easy run + swim</div><div class="day-check" data-check="2">✓</div></div>
-    <div class="day-tile" data-day="3"><div class="day-lbl">Thu</div><div class="day-icon">🏋️</div><div class="day-type">Lower + brick</div><div class="day-check" data-check="3">✓</div></div>
-    <div class="day-tile" data-day="4"><div class="day-lbl">Fri</div><div class="day-icon">💪</div><div class="day-type">Shoulder + core</div><div class="day-check" data-check="4">✓</div></div>
-    <div class="day-tile" data-day="5"><div class="day-lbl">Sat</div><div class="day-icon">🚴</div><div class="day-type">Long ride</div><div class="day-check" data-check="5">✓</div></div>
+    <div class="day-tile" data-day="0"><div class="day-lbl">Mon</div><div class="day-icon">🏋️</div><div class="day-type">Chest + cardio</div><div class="day-check" data-check="0">✓</div></div>
+    <div class="day-tile" data-day="1"><div class="day-lbl">Tue</div><div class="day-icon">🏃</div><div class="day-type">Cardio + abs</div><div class="day-check" data-check="1">✓</div></div>
+    <div class="day-tile" data-day="2"><div class="day-lbl">Wed</div><div class="day-icon">🏋️</div><div class="day-type">Back + legs</div><div class="day-check" data-check="2">✓</div></div>
+    <div class="day-tile" data-day="3"><div class="day-lbl">Thu</div><div class="day-icon">🏃</div><div class="day-type">Cardio + abs</div><div class="day-check" data-check="3">✓</div></div>
+    <div class="day-tile" data-day="4"><div class="day-lbl">Fri</div><div class="day-icon">💪</div><div class="day-type">Shoulders + arms</div><div class="day-check" data-check="4">✓</div></div>
+    <div class="day-tile" data-day="5"><div class="day-lbl">Sat</div><div class="day-icon">🚴</div><div class="day-type">Long endurance</div><div class="day-check" data-check="5">✓</div></div>
     <div class="day-tile" data-day="6"><div class="day-lbl">Sun</div><div class="day-icon">😴</div><div class="day-type">Rest / mobility</div><div class="day-check" data-check="6">✓</div></div>
   </div>
   <div class="detail-panel">
@@ -274,36 +306,36 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
   </div>
   <div class="detail-panel" style="margin-bottom:1.5rem;">
     <div id="phase-hyp" class="phase-panel active">
-      <div class="detail-title" style="margin-bottom:4px;">Hypertrophy block</div>
-      <div class="detail-sub" style="margin-bottom:1rem;">Build work capacity, add muscle, establish movement patterns at moderate load.</div>
+      <div class="detail-title" style="margin-bottom:4px;">Foundation cut — weeks 1–4</div>
+      <div class="detail-sub" style="margin-bottom:1rem;">Build work capacity at moderate load, establish deficit, learn the movement patterns at 12–15 reps.</div>
       <div class="col-heads"><div class="col-head">Week</div><div class="col-head">Sets</div><div class="col-head">Reps</div><div class="col-head">Load / RPE</div></div>
-      <div class="week-row-ol"><span class="wr-wk">Week 1</span><span class="wr-sets">3 sets</span><span class="wr-reps">10–12 reps</span><span class="wr-load">~65% 1RM · RPE 7</span></div>
-      <div class="week-row-ol"><span class="wr-wk">Week 2</span><span class="wr-sets">3 sets</span><span class="wr-reps">10–12 reps</span><span class="wr-load">+5 lbs lower / +2.5 lbs upper</span></div>
-      <div class="week-row-ol"><span class="wr-wk">Week 3</span><span class="wr-sets">4 sets</span><span class="wr-reps">8–10 reps</span><span class="wr-load">~70% · add sets before weight</span></div>
-      <div class="week-row-ol"><span class="wr-wk">Week 4</span><span class="wr-sets">4 sets</span><span class="wr-reps">8–10 reps</span><span class="wr-load">~72.5% · hit top of range 2× first</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 1</span><span class="wr-sets">3 sets</span><span class="wr-reps">12–15 reps</span><span class="wr-load">~60% load · RPE 6–7 · learn patterns</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 2</span><span class="wr-sets">3 sets</span><span class="wr-reps">12–15 reps</span><span class="wr-load">+2.5 lbs upper / +5 lbs lower</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 3</span><span class="wr-sets">4 sets</span><span class="wr-reps">12–15 reps</span><span class="wr-load">same weight · bump sets before load</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 4</span><span class="wr-sets">4 sets</span><span class="wr-reps">10–12 reps</span><span class="wr-load">slight load increase · RPE 7–8</span></div>
     </div>
     <div id="phase-str" class="phase-panel">
-      <div class="detail-title" style="margin-bottom:4px;">Strength block</div>
-      <div class="detail-sub" style="margin-bottom:1rem;">Increase neural efficiency and peak force output. Heavier loads, shorter rep ranges.</div>
+      <div class="detail-title" style="margin-bottom:4px;">Volume block — weeks 5–8</div>
+      <div class="detail-sub" style="margin-bottom:1rem;">Increase sets and load progressively at 10–12 reps. Deficit tightens slightly. Most fat loss happens here.</div>
       <div class="col-heads"><div class="col-head">Week</div><div class="col-head">Sets</div><div class="col-head">Reps</div><div class="col-head">Load / RPE</div></div>
-      <div class="week-row-ol"><span class="wr-wk">Week 5</span><span class="wr-sets">4 sets</span><span class="wr-reps">6–8 reps</span><span class="wr-load">~75% 1RM · RPE 7–8</span></div>
-      <div class="week-row-ol"><span class="wr-wk">Week 6</span><span class="wr-sets">4 sets</span><span class="wr-reps">5–6 reps</span><span class="wr-load">~80% · add 5–10 lbs lower / 2.5–5 upper</span></div>
-      <div class="week-row-ol"><span class="wr-wk">Week 7</span><span class="wr-sets">5 sets</span><span class="wr-reps">4–5 reps</span><span class="wr-load">~82.5% · increase sets first</span></div>
-      <div class="week-row-ol"><span class="wr-wk">Week 8</span><span class="wr-sets">5 sets</span><span class="wr-reps">3–5 reps</span><span class="wr-load">~85% · RPE 8–9 · 1 rep in reserve</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 5</span><span class="wr-sets">4 sets</span><span class="wr-reps">10–12 reps</span><span class="wr-load">+2.5–5 lbs · RPE 7–8</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 6</span><span class="wr-sets">4 sets</span><span class="wr-reps">10–12 reps</span><span class="wr-load">+2.5–5 lbs · hit top of range 2× first</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 7</span><span class="wr-sets">5 sets</span><span class="wr-reps">10–12 reps</span><span class="wr-load">hold weight · add 5th set · RPE 8</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 8</span><span class="wr-sets">5 sets</span><span class="wr-reps">8–10 reps</span><span class="wr-load">+2.5–5 lbs · RPE 8–9 · 1 RIR</span></div>
     </div>
     <div id="phase-pk" class="phase-panel">
-      <div class="detail-title" style="margin-bottom:4px;">Peaking block</div>
-      <div class="detail-sub" style="margin-bottom:1rem;">Express maximum strength. Volume drops, intensity peaks. Attempt PRs on primary lifts.</div>
+      <div class="detail-title" style="margin-bottom:4px;">Definition peak — weeks 9–11</div>
+      <div class="detail-sub" style="margin-bottom:1rem;">Highest volume at 8–10 reps with controlled tempo. 60 sec rest periods. Pump-focused. Visible changes accelerate.</div>
       <div class="col-heads"><div class="col-head">Week</div><div class="col-head">Sets</div><div class="col-head">Reps</div><div class="col-head">Load / RPE</div></div>
-      <div class="week-row-ol"><span class="wr-wk">Week 9</span><span class="wr-sets">4 sets</span><span class="wr-reps">3–4 reps</span><span class="wr-load">~87% 1RM · RPE 8.5</span></div>
-      <div class="week-row-ol"><span class="wr-wk">Week 10</span><span class="wr-sets">3 sets</span><span class="wr-reps">2–3 reps</span><span class="wr-load">~90% · reduce volume, hold intensity</span></div>
-      <div class="week-row-ol"><span class="wr-wk">Week 11</span><span class="wr-sets">2–3 sets</span><span class="wr-reps">1–3 reps</span><span class="wr-load">~92–95% · PR attempts on main lifts</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 9</span><span class="wr-sets">4 sets</span><span class="wr-reps">8–10 reps</span><span class="wr-load">~80% · 60 sec rest · pump focus</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 10</span><span class="wr-sets">4 sets</span><span class="wr-reps">8–10 reps</span><span class="wr-load">+2.5 lbs · 2 sec eccentric tempo</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 11</span><span class="wr-sets">5 sets</span><span class="wr-reps">8–10 reps</span><span class="wr-load">RPE 9 · best physique week · 1 RIR</span></div>
     </div>
     <div id="phase-dl" class="phase-panel">
-      <div class="detail-title" style="margin-bottom:4px;">Deload week</div>
-      <div class="detail-sub" style="margin-bottom:1rem;">Full tissue and CNS recovery. Where 11 weeks of adaptation consolidates. Non-negotiable.</div>
+      <div class="detail-title" style="margin-bottom:4px;">Deload — week 12</div>
+      <div class="detail-sub" style="margin-bottom:1rem;">Drop volume by 50%, hold deficit, full tissue recovery. This is where the 11 weeks of adaptation consolidates.</div>
       <div class="col-heads"><div class="col-head">Week</div><div class="col-head">Sets</div><div class="col-head">Reps</div><div class="col-head">Load / RPE</div></div>
-      <div class="week-row-ol"><span class="wr-wk">Week 12</span><span class="wr-sets">2–3 sets</span><span class="wr-reps">8–10 reps</span><span class="wr-load">~50–60% · RPE 5–6 · no grinding</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 12</span><span class="wr-sets">2–3 sets</span><span class="wr-reps">12–15 reps</span><span class="wr-load">~50% · RPE 5 · no grinding · full recovery</span></div>
     </div>
   </div>
   <div class="sec-label" style="margin-bottom:8px;">Universal rules</div>
@@ -318,43 +350,38 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
 <!-- NUTRITION -->
 <div id="page-nutrition" class="page">
   <div class="section-title">Nutrition plan</div>
-  <div class="section-desc">Daily macro targets and full meal plans. Check off meals as you eat them.</div>
+  <div class="section-desc">Tap a day type to see your targets. Each meal has 3 options — tap A / B / C to rotate. Check off meals as you eat them.</div>
   <div class="meal-day-tabs" id="meal-tabs">
-    <button class="mdt active" data-meal="train">Training day</button>
-    <button class="mdt" data-meal="rest">Rest day</button>
+    <button class="mdt active" data-dtype="hard">Hard day (Mon/Thu/Sat)</button>
+    <button class="mdt" data-dtype="std">Standard (Tue/Fri)</button>
+    <button class="mdt" data-dtype="easy">Easy / rest (Wed/Sun)</button>
   </div>
-  <div id="meal-train" class="meal-sec active">
-    <div class="macro-grid">
-      <div class="macro-card"><div class="macro-val">2650</div><div class="macro-unit">kcal</div><div class="macro-lbl">Calories</div></div>
-      <div class="macro-card"><div class="macro-val">196</div><div class="macro-unit">grams</div><div class="macro-lbl">Protein</div></div>
-      <div class="macro-card"><div class="macro-val">290</div><div class="macro-unit">grams</div><div class="macro-lbl">Carbs</div></div>
-      <div class="macro-card"><div class="macro-val">75</div><div class="macro-unit">grams</div><div class="macro-lbl">Fat</div></div>
-    </div>
-    <div id="meals-train-body"></div>
-  </div>
-  <div id="meal-rest" class="meal-sec">
-    <div class="macro-grid">
-      <div class="macro-card"><div class="macro-val">2450</div><div class="macro-unit">kcal</div><div class="macro-lbl">Calories</div></div>
-      <div class="macro-card"><div class="macro-val">196</div><div class="macro-unit">grams</div><div class="macro-lbl">Protein</div></div>
-      <div class="macro-card"><div class="macro-val">240</div><div class="macro-unit">grams</div><div class="macro-lbl">Carbs</div></div>
-      <div class="macro-card"><div class="macro-val">70</div><div class="macro-unit">grams</div><div class="macro-lbl">Fat</div></div>
-    </div>
-    <div id="meals-rest-body"></div>
-  </div>
+  <div id="nutrition-body"></div>
 </div>
 
 <!-- MEAL PREP -->
 <div id="page-prep" class="page">
   <div class="section-title">Sunday meal prep</div>
-  <div class="section-desc">~90 minutes Sunday batch cook. Feeds the whole week.</div>
+  <div class="section-desc">~90 minutes Sunday batch cook. Pick which option set you are prepping this week.</div>
+  <div class="meal-day-tabs" id="prep-tabs" style="margin-bottom:1.25rem;">
+    <button class="mdt active" data-pplan="A">Option A</button>
+    <button class="mdt" data-pplan="B">Option B</button>
+    <button class="mdt" data-pplan="C">Option C</button>
+  </div>
   <div id="prep-body"></div>
 </div>
 
 <!-- SHOPPING -->
 <div id="page-shopping" class="page">
   <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:.5rem;flex-wrap:wrap;">
-    <div><div class="section-title">Shopping list</div><div class="section-desc" style="margin-bottom:0;">Tap items to check them off as you shop.</div></div>
+    <div><div class="section-title">Shopping list</div><div class="section-desc" style="margin-bottom:0;">Choose which meal options you are cooking this week, then check off items as you shop.</div></div>
     <button class="reset-btn" id="reset-shop-btn">Reset list</button>
+  </div>
+  <div class="meal-day-tabs" id="shop-tabs" style="margin-top:1rem;margin-bottom:0;">
+    <button class="mdt active" data-splan="A">Option A</button>
+    <button class="mdt" data-splan="B">Option B</button>
+    <button class="mdt" data-splan="C">Option C</button>
+    <button class="mdt" data-splan="all">Full list</button>
   </div>
   <div class="divider"></div>
   <div class="shop-grid" id="shop-grid"></div>
@@ -383,162 +410,308 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
 // ── Supabase config ──────────────────────────────────────────
 // After creating your Supabase project, paste your values below.
 // Settings → API → Project URL and anon public key.
-var SUPABASE_URL = 'https://lwdegmgosiqxlehirxyy.supabase.co';
-var SUPABASE_KEY = 'sb_publishable_aCMjgrHtzoCqDuXG-Ms7_w_DGUmM27c';
+var SUPABASE_URL = 'PASTE_YOUR_PROJECT_URL_HERE';
+var SUPABASE_KEY = 'PASTE_YOUR_ANON_PUBLIC_KEY_HERE';
 var saveTimer = null;
 
 // ============================================================
 // DATA
 // ============================================================
 var DAYS_DATA = [
-  { title:'Monday — Lower body', sub:'65–75 min · Squat focus · 3–5 sets · 5–10 reps',
+  { title:'Monday — Chest + cardio', sub:'65–70 min · High volume moderate weight · 3–4 sets · 10–15 reps · Rest 60–90 sec',
     sections:[
-      { label:'Mobility warm-up (10 min)', exercises:[
-        {name:'Hip 90/90 switches',sets:'2 × 8 each side',mob:true},
-        {name:"World's greatest stretch",sets:'5 reps each side',mob:true},
-        {name:'Banded hip flexor stretch',sets:'60 sec each side',mob:true}]},
-      { label:'Main lifts', exercises:[
-        {name:'Back squat',sets:'4 × 5–6 @ 80%+ 1RM'},
-        {name:'Romanian deadlift',sets:'3 × 8–10'},
-        {name:'Bulgarian split squat',sets:'3 × 8 each leg'}]},
+      { label:'Warm-up cardio', exercises:[
+        {name:'Treadmill incline walk or light jog',sets:'10 min · zone 2'}]},
+      { label:'Chest — main work', exercises:[
+        {name:'Barbell bench press',sets:'4 × 10 · moderate load · RPE 7'},
+        {name:'Incline dumbbell press',sets:'3 × 12'},
+        {name:'Cable fly (mid)',sets:'3 × 15'},
+        {name:'Dumbbell pullover',sets:'3 × 12 · chest stretch'},
+        {name:'Push-up to failure',sets:'2 × max'}]},
+      { label:'Cardio finisher', exercises:[
+        {name:'Rowing machine or bike intervals',sets:'20 min · 1 min hard / 1 min easy × 10'}]}],
+    note:'Keep weight at RPE 7 — the goal is pump and muscle tension, not max load. 60–90 sec rest between sets.'},
+  { title:'Tuesday — Cardio + abs', sub:'50–60 min · No heavy lifting · Endurance + core',
+    sections:[
+      { label:'Cardio — choose one', exercises:[
+        {name:'Tempo run',sets:'30–40 min · zone 3–4 · comfortably hard'},
+        {name:'Swim technique session',sets:'1,500–2,000m · drills + steady sets'}]},
+      { label:'Abs circuit — 3 rounds', exercises:[
+        {name:'Hanging leg raise',sets:'3 × 15'},
+        {name:'Cable crunch',sets:'3 × 20'},
+        {name:'Plank',sets:'3 × 45–60 sec'},
+        {name:'Bicycle crunch',sets:'3 × 20 each side'}]}],
+    note:'Tuesday keeps you moving without loading the chest from Monday. The abs work here is the primary core training for the week — treat it seriously.'},
+  { title:'Wednesday — Back + legs', sub:'80–90 min · Biggest session of the week · Supersetted upper/lower to save time',
+    sections:[
+      { label:'Warm-up', exercises:[
+        {name:'Rowing machine easy',sets:'8 min · activates back + gets blood moving'},
+        {name:"Hip 90/90 + world's greatest stretch",sets:'2 × 5 each · leg mobility prep',mob:true}]},
+      { label:'Superset 1 — back + quads · 4 rounds (no rest within, 90 sec between)', exercises:[
+        {name:'Weighted pull-up',sets:'4 × 8'},
+        {name:'Back squat',sets:'4 × 8–10 · moderate load'}]},
+      { label:'Superset 2 — back + posterior chain · 3 rounds', exercises:[
+        {name:'Barbell row',sets:'3 × 10'},
+        {name:'Romanian deadlift',sets:'3 × 10'}]},
+      { label:'Superset 3 — back width + legs · 3 rounds', exercises:[
+        {name:'Lat pulldown (wide grip)',sets:'3 × 12'},
+        {name:'Bulgarian split squat',sets:'3 × 10 each leg'}]},
       { label:'Accessories', exercises:[
-        {name:'Nordic hamstring curl',sets:'3 × 6–8'},
-        {name:'Hip thrust',sets:'3 × 10–12'},
-        {name:'Standing calf raise',sets:'3 × 15'}]}]},
-  { title:'Tuesday — Shoulder / Upper + Tempo Run', sub:'Lift 60–65 min · Tempo run 40–50 min · ~2 hrs total',
+        {name:'Seated cable row',sets:'3 × 12'},
+        {name:'Walking lunge (DB)',sets:'3 × 12 each leg'},
+        {name:'Face pull',sets:'3 × 15 · shoulder health'},
+        {name:'Standing calf raise',sets:'3 × 20'}]}],
+    note:'Supersets pair back and leg exercises so each muscle group rests while the other works. Full back + full leg session in 80–90 min. Eat well the night before — this is the hardest day of the week.'},
+  { title:'Thursday — Cardio + abs', sub:'50–60 min · Active recovery from Wednesday · Different modality',
     sections:[
-      { label:'Shoulder mobility warm-up (10 min)', exercises:[
-        {name:'Band pull-aparts',sets:'3 × 15 — opens chest, activates rear delt',mob:true},
-        {name:'Shoulder CARs',sets:'2 × 5 each arm — slow full range',mob:true},
-        {name:'Wall slides',sets:'2 × 10 — scapular control',mob:true}]},
-      { label:'Shoulder-focused main lifts', exercises:[
-        {name:'Seated dumbbell overhead press',sets:'4 × 6–8'},
-        {name:'Arnold press',sets:'3 × 10 — hits all 3 delt heads'},
-        {name:'Weighted pull-up',sets:'4 × 5–8'}]},
-      { label:'Accessories', exercises:[
-        {name:'Lateral raise (cable or DB)',sets:'4 × 12–15 — medial delt isolation'},
-        {name:'Face pull',sets:'3 × 15 — rear delt + external rotation'},
-        {name:'Prone Y-T-W raises',sets:'2 × 10 each — scapular stability',mob:true},
-        {name:'Cable row (wide grip)',sets:'3 × 10–12'}]},
-      { label:'Cardio — tempo run (after lift)', exercises:[
-        {name:'Easy warm-up jog',sets:'10 min · zone 2'},
-        {name:'Tempo intervals',sets:'4 × 6 min @ comfortably hard · 90 sec jog recovery'},
-        {name:'Cool-down',sets:'10 min easy'}]}],
-    note:'Leave at least 30 min between finishing the lift and starting your run. Eat a small carb snack in between.'},
-  { title:'Wednesday — Easy Run + Swim', sub:'Active recovery · Zone 1–2 only · No intensity',
+      { label:'Cardio — choose one', exercises:[
+        {name:'Easy to moderate run',sets:'35–45 min · zone 2 · recovery pace'},
+        {name:'Bike intervals',sets:'30 min · 2 min hard / 2 min easy × 7'},
+        {name:'Swim steady state',sets:'1,500m easy · technique focus'}]},
+      { label:'Abs circuit — 3 rounds', exercises:[
+        {name:'Dead bug',sets:'3 × 10 each side'},
+        {name:'Pallof press',sets:'3 × 12 each side'},
+        {name:'Ab wheel rollout',sets:'3 × 10'},
+        {name:'Side plank',sets:'3 × 30 sec each side'}]}],
+    note:'Thursday is intentionally lighter than Wednesday. Your legs will be sore — keep the cardio honest but do not push intensity. Zone 2 is the goal.'},
+  { title:'Friday — Shoulders + arms', sub:'65–75 min · The aesthetic day · Definition focus · 3–4 × 12–15',
     sections:[
-      { label:'Run (morning)', exercises:[{name:'Easy zone 2 run',sets:'35–45 min · conversational pace throughout'}]},
-      { label:'Swim (afternoon / evening)', exercises:[
-        {name:'Catch-up drill',sets:'4 × 50m — timing and stroke length'},
-        {name:'Pull buoy set',sets:'4 × 100m — upper body endurance'},
-        {name:'Steady main set',sets:'6 × 75m @ easy effort'}]}],
-    note:'Wednesday is your lightest day. If beaten up from Mon/Tue, skip the swim and just run easy.'},
-  { title:'Thursday — Lower Body + Brick Run', sub:'Lift 60–65 min · Brick run 20 min · ~90 min total',
+      { label:'Shoulders', exercises:[
+        {name:'Seated dumbbell overhead press',sets:'4 × 10'},
+        {name:'Cable lateral raise',sets:'4 × 15 · slow and controlled'},
+        {name:'Rear delt fly (machine or DB)',sets:'3 × 15'},
+        {name:'Band pull-apart',sets:'2 × 20 · rotator health',mob:true}]},
+      { label:'Arms — superset pairs (no rest within pair)', exercises:[
+        {name:'Barbell curl + tricep pushdown',sets:'3 × 12 each'},
+        {name:'Incline dumbbell curl + overhead extension',sets:'3 × 12 each'},
+        {name:'Hammer curl + rope pushdown',sets:'3 × 12 each'}]},
+      { label:'Cardio finisher', exercises:[
+        {name:'Run or bike',sets:'20 min · zone 2'}]}],
+    note:'Arms are always supersetted bicep + tricep back to back. Creates a pump effect and keeps the session efficient.'},
+  { title:'Saturday — Long endurance', sub:'90–150 min · Aerobic base · Zone 2–3 · Triathlon fitness anchor',
     sections:[
-      { label:'Mobility warm-up (8 min)', exercises:[
-        {name:'Pigeon pose hold',sets:'60 sec each side — hip flexor and glute prep',mob:true},
-        {name:'Ankle circles + calf raises',sets:'2 × 10 each — ankle dorsiflexion',mob:true},
-        {name:'Cat-cow + thoracic extension',sets:'10 reps — spine prep',mob:true}]},
-      { label:'Main lifts', exercises:[
-        {name:'Trap bar deadlift',sets:'4 × 4–6 @ 80%+ 1RM'},
-        {name:'Leg press',sets:'3 × 10–12 — quad volume'},
-        {name:'Walking lunge (DB)',sets:'3 × 10 each leg'}]},
-      { label:'Accessories', exercises:[
-        {name:'Glute-ham raise or leg curl',sets:'3 × 8–10'},
-        {name:'Single-leg RDL (DB)',sets:'3 × 8 each — balance + posterior chain'}]},
-      { label:'Brick run (immediately after lift)', exercises:[
-        {name:'Brick run',sets:'20 min easy · zone 2 · simulates race fatigue'}]}],
-    note:"The brick run is intentionally short and easy — goal is run-off-legs adaptation, not fitness stress. Don't push the pace."},
-  { title:'Friday — Shoulder / Upper + Core', sub:'70–80 min · Volume upper · Shoulder emphasis · Core + mobility finisher',
-    sections:[
-      { label:'Shoulder mobility warm-up (10 min)', exercises:[
-        {name:'Doorframe pec stretch',sets:'2 × 45 sec — opens anterior shoulder',mob:true},
-        {name:'Sleeper stretch',sets:'2 × 45 sec each side — posterior capsule',mob:true},
-        {name:'Band dislocates',sets:'2 × 10 — overhead shoulder range',mob:true}]},
-      { label:'Shoulder-focused main lifts', exercises:[
-        {name:'Barbell overhead press (standing)',sets:'4 × 5–6 @ heavy — full-body stability'},
-        {name:'Incline dumbbell press',sets:'3 × 10 — upper chest + anterior delt'},
-        {name:'Cable lateral raise',sets:'4 × 15 — constant tension on medial delt'},
-        {name:'Rear delt fly (machine or DB)',sets:'3 × 15 — posterior delt balance'}]},
-      { label:'Pull accessories', exercises:[
-        {name:'Chest-supported DB row',sets:'3 × 10–12'},
-        {name:'Single-arm cable row',sets:'3 × 12 each'},
-        {name:'Shrugs (DB or barbell)',sets:'3 × 12 — upper trap for shoulder girdle'}]},
-      { label:'Core + mobility finisher (15 min)', exercises:[
-        {name:'Pallof press',sets:'3 × 12 each side — anti-rotation core',mob:true},
-        {name:'Dead bug',sets:'3 × 8 each side — deep core stability'},
-        {name:'Thoracic spine rotation (seated)',sets:'2 × 10 each side',mob:true},
-        {name:"Child's pose + lat stretch",sets:'60 sec each — cool-down',mob:true}]}]},
-  { title:'Saturday — Long Ride', sub:'90–150 min · Aerobic base · Zone 2–3 · No time limit',
-    sections:[
-      { label:'Structure', exercises:[
-        {name:'Warm-up spin',sets:'15 min · easy zone 1–2'},
-        {name:'Main ride',sets:'60–120 min steady zone 2–3 · 2–3 short surges ok'},
-        {name:'Cool-down',sets:'10–15 min easy spin'}]}],
-    note:'Every 3rd Saturday add a 15–20 min easy brick run off the bike. Eat and hydrate aggressively before and during.'},
-  { title:'Sunday — Rest + Mobility', sub:'No structured training · Body resets for the week ahead',
+      { label:'Choose one', exercises:[
+        {name:'Long ride (primary)',sets:'90–120 min · zone 2–3 · 2–3 surges ok'},
+        {name:'Long run',sets:'60–90 min · easy conversational pace'}]}],
+    note:'Every 3rd Saturday add a 15–20 min easy brick run off the bike. Eat and hydrate aggressively. This session protects your endurance base.'},
+  { title:'Sunday — Rest + mobility', sub:'No structured training · Body resets for the week ahead',
     sections:[
       { label:'Optional mobility flow (20–30 min)', exercises:[
-        {name:'Hip flexor lunge stretch',sets:'90 sec each side',mob:true},
-        {name:'Figure-4 glute stretch',sets:'90 sec each side',mob:true},
-        {name:'Doorframe shoulder stretch',sets:'60 sec each arm',mob:true},
-        {name:'Thoracic foam roll',sets:'2 min up and down thoracic spine',mob:true},
+        {name:'Hip flexor lunge + pigeon pose',sets:'90 sec each side',mob:true},
+        {name:'Thoracic foam roll',sets:'2–3 min',mob:true},
         {name:'Hamstring doorframe stretch',sets:'90 sec each leg',mob:true},
-        {name:'Diaphragmatic breathing',sets:'5 min · nervous system downregulation'}]}],
-    note:'Sunday mobility is genuinely optional. If sore, do it. If feeling great, just rest. Sleep is still the highest-value recovery tool.'}
-];
+        {name:'Shoulder + lat stretch',sets:'60 sec each arm',mob:true}]}],
+    note:'Sleep is the highest-value recovery tool. Sunday is not a bonus training opportunity — it is what makes the rest of the week work.'}
+]
 
-var MEALS_TRAIN = [
-  {name:'🌅 Breakfast — pre-workout',kcal:'~620 kcal · 45g protein',items:['5 whole eggs scrambled','1 cup oats cooked, topped with banana + drizzle honey','Black coffee']},
-  {name:'🕛 Lunch',kcal:'~700 kcal · 55g protein',items:['8 oz ground turkey or chicken breast in olive oil + seasoning','1.5 cups cooked white rice','1 cup roasted broccoli or zucchini','Hot sauce or low-calorie sauce']},
-  {name:'🍎 Afternoon snack',kcal:'~350 kcal · 20g protein',items:['1 cup full-fat Greek yogurt','1/4 cup granola + 1 serving berries or banana']},
-  {name:'🌙 Dinner',kcal:'~750 kcal · 55g protein',items:['8–10 oz salmon, ground beef (90/10), or lean steak','1 large sweet potato or 1.5 cups rice','Large salad: greens, cucumber, cherry tomatoes, 1/2 avocado, olive oil + lemon']},
-  {name:'🌛 Evening snack',kcal:'~230 kcal · 25g protein',items:['1 cup cottage cheese or casein protein shake','Small handful almonds (~20g)']}
-];
-var MEALS_REST = [
-  {name:'🌅 Breakfast',kcal:'~520 kcal · 40g protein',items:['4 whole eggs scrambled','2 slices sourdough toast + small handful berries','Black coffee']},
-  {name:'🕛 Lunch',kcal:'~600 kcal · 50g protein',items:['8 oz chicken breast or canned salmon','1 cup cooked rice or 1 medium sweet potato','Big side salad with olive oil dressing']},
-  {name:'🍎 Snack',kcal:'~250 kcal · 20g protein',items:['1 cup Greek yogurt + berries (skip granola on rest day)']},
-  {name:'🌙 Dinner',kcal:'~650 kcal · 50g protein',items:['8 oz salmon or lean beef','Large roasted vegetable mix (broccoli, asparagus, peppers)','1/2 avocado + side salad']},
-  {name:'🌛 Evening snack',kcal:'~230 kcal · 25g protein',items:['1 cup cottage cheese + small handful almonds']}
-];
-var PREP_STEPS = [
-  {n:1,text:'Cook 4–5 lbs of protein in bulk. Bake chicken at 400°F for 22–25 min. Brown 2 lbs ground turkey in a skillet. Season simply — salt, pepper, garlic powder. Portion into 6–8 oz containers.'},
-  {n:2,text:'Cook a large pot of white rice — 3–4 cups dry yields ~8–10 cups cooked. Alternatively bake 4–5 sweet potatoes at 400°F for 45 min alongside the chicken.'},
-  {n:3,text:'Roast a full sheet pan of vegetables — broccoli, zucchini, peppers. Toss in olive oil + salt, roast at 425°F for 20–22 min. Reheats well through Thursday.'},
-  {n:4,text:'Hard boil 8–10 eggs. These are your grab-and-go protein for busy mornings or extra snacks. Stays fresh all week in the fridge.'},
-  {n:5,text:'Portion snacks into containers. Scoop Greek yogurt into single-serve tubs. Divide nuts into 20g bags. Stack cottage cheese cups. Pre-portioned snacks = snacks that actually get eaten.'},
-  {n:6,text:'Buy pre-washed salad greens, cherry tomatoes, cucumber. Store in the fridge and build the salad fresh at dinner — pre-dressed salad gets soggy fast.'}
-];
-var SHOP_CATS = [
-  {label:'Proteins',items:['Chicken breast — 3–4 lbs','Ground turkey (93/7) — 2 lbs','Salmon fillets — 1.5–2 lbs','Eggs — 2 dozen','Greek yogurt (full fat) — 32 oz tub','Cottage cheese — 2 × 16 oz tubs','Canned tuna or salmon — 4 cans']},
-  {label:'Carbohydrates',items:['White rice — 5 lb bag','Oats (rolled) — large canister','Sweet potatoes — 4–5 medium','Bananas — 1 bunch (6–8)','Sourdough or whole grain bread — 1 loaf','Granola — 1 bag','Honey — small jar']},
-  {label:'Fats',items:['Extra virgin olive oil — 16 oz bottle','Avocados — 3–4','Almonds (raw or lightly salted) — 12 oz bag','Natural peanut or almond butter — 1 jar']},
-  {label:'Produce',items:['Broccoli — 2 large heads','Mixed greens / spinach — large bag','Cherry tomatoes — 1 pint','Cucumber — 2','Bell peppers — 3–4 (any color)','Zucchini — 2','Frozen berries — 2 lb bag','Lemons — 3–4']},
-  {label:'Pantry / supplements',items:['Creatine monohydrate — 500g tub','Salt, black pepper, garlic powder','Hot sauce / low-cal sauces','Electrolyte packets (long ride)','Coffee','Balsamic or apple cider vinegar','Casein protein powder (optional)']}
-];
+
+// ============================================================
+// MEAL PLANS — 3 day types x 5 meals x 3 options each — CUT PHASE
+// dayType: 'hard' = Mon/Wed/Sat (~2450 kcal — strength+cardio days)
+//          'std'  = Tue/Fri     (~2300 kcal — cardio-only days)
+//          'easy' = Thu/Sun     (~2200 kcal — recovery/rest days)
+// ============================================================
+var MEAL_PLANS = {
+  hard: {
+    label: 'Hard training day (Mon/Wed/Sat)',
+    note: 'Strength + long endurance days — highest carbs to fuel muscle work and preserve performance.',
+    macros: { kcal:'2450', protein:'196', carbs:'260', fat:'65' },
+    meals: [
+      { name:'🌅 Breakfast', kcal:'~650 kcal · 45g P', options:[
+        { label:'A', items:['5 whole eggs scrambled','1.5 cups oats with banana + honey','Black coffee'] },
+        { label:'B', items:['Protein pancakes: 1 cup oats, 2 eggs, 1 scoop whey blended + cooked','2 tbsp maple syrup, 1 cup mixed berries','Black coffee'] },
+        { label:'C', items:['Greek yogurt parfait: 1.5 cups full-fat Greek yogurt, 1/2 cup granola, 1 banana','3 hard-boiled eggs','Black coffee'] }
+      ]},
+      { name:'🕛 Lunch', kcal:'~750 kcal · 58g P', options:[
+        { label:'A', items:['8 oz ground turkey or chicken breast in olive oil + seasoning','2 cups cooked white rice','1 cup roasted broccoli + hot sauce'] },
+        { label:'B', items:['8 oz lean ground beef taco bowl: rice, black beans, salsa, jalapeños','1/4 avocado, squeeze of lime','Side of roasted peppers'] },
+        { label:'C', items:['Chicken stir-fry: 8 oz chicken breast, 2 cups rice, mixed veg, low-sodium soy sauce + garlic','Sesame seeds, green onion'] }
+      ]},
+      { name:'🍎 Afternoon snack', kcal:'~380 kcal · 22g P', options:[
+        { label:'A', items:['1 cup full-fat Greek yogurt + 1/4 cup granola + banana'] },
+        { label:'B', items:['2 rice cakes with 2 tbsp almond butter','1 cup chocolate milk or protein shake'] },
+        { label:'C', items:['Smoothie: 1 scoop whey, 1 banana, 1 cup oats, 1 cup milk, 1 tbsp honey — blend'] }
+      ]},
+      { name:'🌙 Dinner', kcal:'~770 kcal · 58g P', options:[
+        { label:'A', items:['8–10 oz salmon','1 large sweet potato','Large salad: greens, cucumber, cherry tomatoes, 1/2 avocado, olive oil + lemon'] },
+        { label:'B', items:['8 oz lean steak (sirloin or flank)','1.5 cups white rice','Roasted asparagus + garlic butter','Side salad'] },
+        { label:'C', items:['8 oz shrimp or cod in olive oil + spices','1.5 cups pasta or rice','Roasted zucchini and tomatoes','Squeeze of lemon'] }
+      ]},
+      { name:'🌛 Evening snack', kcal:'~200 kcal · 23g P', options:[
+        { label:'A', items:['1 cup cottage cheese + small handful almonds'] },
+        { label:'B', items:['Casein protein shake with water or milk'] },
+        { label:'C', items:['4 oz Greek yogurt + 1 tbsp peanut butter + drizzle honey'] }
+      ]}
+    ]
+  },
+  std: {
+    label: 'Cardio day (Tue/Fri)',
+    note: 'Cardio-only days — moderate carbs, slight deficit. Protein stays high.',
+    macros: { kcal:'2300', protein:'196', carbs:'220', fat:'65' },
+    meals: [
+      { name:'🌅 Breakfast', kcal:'~600 kcal · 43g P', options:[
+        { label:'A', items:['5 whole eggs scrambled','1 cup oats with berries + drizzle honey','Black coffee'] },
+        { label:'B', items:['4 eggs + 2 slices sourdough toast','1/2 avocado, sliced','Small handful of berries','Black coffee'] },
+        { label:'C', items:['Veggie omelette: 4 eggs, spinach, bell pepper, onion','1 cup oats','Black coffee'] }
+      ]},
+      { name:'🕛 Lunch', kcal:'~700 kcal · 55g P', options:[
+        { label:'A', items:['8 oz chicken breast in olive oil + seasoning','1.5 cups white rice','1 cup roasted broccoli'] },
+        { label:'B', items:['Large chicken salad: 8 oz grilled chicken, mixed greens, cucumber, cherry tomatoes, feta, olive oil + lemon','1 medium sweet potato on the side'] },
+        { label:'C', items:['8 oz canned salmon mixed with Greek yogurt, dill, lemon','2 slices sourdough toast','Side of roasted veg'] }
+      ]},
+      { name:'🍎 Afternoon snack', kcal:'~320 kcal · 20g P', options:[
+        { label:'A', items:['1 cup Greek yogurt + 1/4 cup granola + berries'] },
+        { label:'B', items:['Apple + 2 tbsp almond butter','1 string cheese or 1 oz almonds'] },
+        { label:'C', items:['Protein shake + 1 banana'] }
+      ]},
+      { name:'🌙 Dinner', kcal:'~750 kcal · 55g P', options:[
+        { label:'A', items:['8 oz salmon or lean beef','1 cup rice or 1 medium sweet potato','Large salad with avocado + olive oil'] },
+        { label:'B', items:['Turkey meatballs (8 oz ground turkey, seasoned + baked)','1.5 cups pasta, olive oil, garlic, cherry tomatoes','Side salad'] },
+        { label:'C', items:['8 oz chicken thighs (baked)','1 cup quinoa','Roasted brussels sprouts + olive oil'] }
+      ]},
+      { name:'🌛 Evening snack', kcal:'~230 kcal · 23g P', options:[
+        { label:'A', items:['1 cup cottage cheese + small handful almonds'] },
+        { label:'B', items:['Casein shake with milk'] },
+        { label:'C', items:['4 oz Greek yogurt + 1 tbsp peanut butter'] }
+      ]}
+    ]
+  },
+  easy: {
+    label: 'Recovery / rest day (Thu/Sun)',
+    note: 'Lowest carb day — maximum deficit. Protein non-negotiable at 196g.',
+    macros: { kcal:'2200', protein:'196', carbs:'180', fat:'65' },
+    meals: [
+      { name:'🌅 Breakfast', kcal:'~530 kcal · 40g P', options:[
+        { label:'A', items:['4 whole eggs scrambled','2 slices sourdough toast + small handful berries','Black coffee'] },
+        { label:'B', items:['Greek yogurt bowl: 1.5 cups yogurt, 1/4 cup granola, mixed berries','2 hard-boiled eggs','Black coffee'] },
+        { label:'C', items:['Veggie scramble: 4 eggs, spinach, mushrooms, feta','1 slice sourdough toast','Black coffee'] }
+      ]},
+      { name:'🕛 Lunch', kcal:'~620 kcal · 52g P', options:[
+        { label:'A', items:['8 oz chicken breast','1 cup rice or 1 medium sweet potato','Big salad with olive oil dressing'] },
+        { label:'B', items:['Tuna salad: 2 cans tuna, Greek yogurt, celery, lemon','Mixed greens, cucumber, cherry tomatoes','1 slice sourdough'] },
+        { label:'C', items:['8 oz salmon fillet','Large roasted vegetable plate (broccoli, peppers, zucchini)','1/2 avocado'] }
+      ]},
+      { name:'🍎 Snack', kcal:'~250 kcal · 20g P', options:[
+        { label:'A', items:['1 cup Greek yogurt + berries (no granola)'] },
+        { label:'B', items:['Protein shake + small apple'] },
+        { label:'C', items:['2 oz almonds + 1 string cheese'] }
+      ]},
+      { name:'🌙 Dinner', kcal:'~770 kcal · 55g P', options:[
+        { label:'A', items:['8 oz salmon or lean beef','Large roasted vegetable mix (broccoli, asparagus, peppers)','1/2 avocado + side salad'] },
+        { label:'B', items:['8 oz chicken thighs (baked)','Cauliflower rice or 1/2 cup regular rice','Roasted broccoli + garlic'] },
+        { label:'C', items:['Shrimp stir-fry: 8 oz shrimp, mixed veg, olive oil, garlic, low-sodium soy','1/2 cup brown rice or cauliflower rice'] }
+      ]},
+      { name:'🌛 Evening snack', kcal:'~230 kcal · 25g P', options:[
+        { label:'A', items:['1 cup cottage cheese + small handful almonds'] },
+        { label:'B', items:['Casein shake with water'] },
+        { label:'C', items:['4 oz Greek yogurt + 1 tbsp almond butter'] }
+      ]}
+    ]
+  }
+};
+
+// Day index → day type mapping (0=Mon,1=Tue,2=Wed,3=Thu,4=Fri,5=Sat,6=Sun)
+var DAY_TYPE_MAP = ['hard','std','hard','easy','std','hard','easy'];
+
+
+// ============================================================
+// SHOPPING LISTS — one per meal option set (A/B/C)
+// ============================================================
+var SHOP_PLANS = {
+  A: {
+    label: 'Option A meals',
+    cats: [
+      {label:'Proteins', items:['Chicken breast — 3–4 lbs','Ground turkey (93/7) — 2 lbs','Salmon fillets — 1.5–2 lbs','Eggs — 2 dozen','Greek yogurt (full fat) — 32 oz tub','Cottage cheese — 2 × 16 oz tubs','Canned tuna or salmon — 4 cans']},
+      {label:'Carbohydrates', items:['White rice — 5 lb bag','Oats (rolled) — large canister','Sweet potatoes — 4–5 medium','Bananas — 1 bunch (6–8)','Sourdough or whole grain bread — 1 loaf','Granola — 1 bag','Honey — small jar']},
+      {label:'Fats', items:['Extra virgin olive oil — 16 oz bottle','Avocados — 3–4','Almonds — 12 oz bag','Natural peanut or almond butter — 1 jar']},
+      {label:'Produce', items:['Broccoli — 2 large heads','Mixed greens / spinach — large bag','Cherry tomatoes — 1 pint','Cucumber — 2','Bell peppers — 3–4','Zucchini — 2','Frozen berries — 2 lb bag','Lemons — 3–4']},
+      {label:'Pantry / supplements', items:['Creatine monohydrate — 500g tub','Salt, pepper, garlic powder','Hot sauce / low-cal sauces','Electrolyte packets','Coffee','Balsamic vinegar','Casein protein powder (optional)']}
+    ]
+  },
+  B: {
+    label: 'Option B meals',
+    cats: [
+      {label:'Proteins', items:['Lean ground beef (90/10) — 2 lbs','Chicken breast — 2 lbs','Eggs — 2 dozen','Whey protein powder — 1 bag','Greek yogurt (full fat) — 32 oz tub','Canned tuna — 4 cans','Black beans — 2 cans','Feta cheese — 4 oz']},
+      {label:'Carbohydrates', items:['White rice — 5 lb bag','Oats (rolled) — large canister','Sweet potatoes — 4–5 medium','Bananas — 1 bunch','Pasta — 1 lb box','Maple syrup — small bottle','Sourdough bread — 1 loaf']},
+      {label:'Fats', items:['Extra virgin olive oil — 16 oz bottle','Avocados — 3–4','Almonds — 12 oz bag','Almond butter — 1 jar']},
+      {label:'Produce', items:['Salsa — 1 jar','Jalapeños — 1 small jar','Limes — 4–6','Mixed greens — large bag','Cherry tomatoes — 1 pint','Asparagus — 1 bunch','Bell peppers — 3–4','Lemons — 3–4']},
+      {label:'Pantry / supplements', items:['Low-sodium soy sauce — small bottle','Sesame seeds','Creatine monohydrate — 500g tub','Salt, pepper, garlic powder','Coffee','Electrolyte packets','Casein protein powder (optional)']}
+    ]
+  },
+  C: {
+    label: 'Option C meals',
+    cats: [
+      {label:'Proteins', items:['Chicken thighs — 3 lbs','Shrimp or cod — 2 lbs','Eggs — 2 dozen','Whey protein powder — 1 bag','Greek yogurt (full fat) — 32 oz tub','Cottage cheese — 2 × 16 oz tubs','Canned salmon — 4 cans']},
+      {label:'Carbohydrates', items:['Oats (rolled) — large canister','Quinoa — 1 bag','Brown rice or cauliflower rice — 2 bags','Bananas — 1 bunch','Granola — 1 bag','Honey — small jar']},
+      {label:'Fats', items:['Extra virgin olive oil — 16 oz bottle','Avocados — 3–4','Almonds — 12 oz bag','Almond butter — 1 jar']},
+      {label:'Produce', items:['Brussels sprouts — 1 bag','Spinach — large bag','Cauliflower — 1 head (or buy riced)','Zucchini — 2','Mixed veg stir-fry bag — 2 bags','Lemons — 3–4','Frozen berries — 2 lb bag','Green onion']},
+      {label:'Pantry / supplements', items:['Low-sodium soy sauce — small bottle','Sesame oil — small bottle','Creatine monohydrate — 500g tub','Salt, pepper, garlic powder','Coffee','Electrolyte packets','Casein protein powder (optional)']}
+    ]
+  },
+  all: {
+    label: 'Full master list (all options)',
+    cats: [
+      {label:'Proteins — all options', items:['Chicken breast — 3–4 lbs','Chicken thighs — 2 lbs','Ground turkey (93/7) — 2 lbs','Lean ground beef (90/10) — 2 lbs','Salmon fillets — 1.5–2 lbs','Shrimp or cod — 1.5 lbs','Eggs — 3 dozen','Whey protein powder — 1 bag','Greek yogurt (full fat) — 2 × 32 oz tubs','Cottage cheese — 2 × 16 oz tubs','Canned tuna — 4 cans','Canned salmon — 4 cans','Black beans — 2 cans','Feta cheese — 4 oz']},
+      {label:'Carbohydrates — all options', items:['White rice — 5 lb bag','Oats (rolled) — large canister','Sweet potatoes — 6–8 medium','Bananas — 2 bunches','Sourdough bread — 1 loaf','Pasta — 1 lb box','Quinoa — 1 bag','Brown rice or cauliflower rice — 2 bags','Granola — 1 bag','Honey — small jar','Maple syrup — small bottle']},
+      {label:'Fats — all options', items:['Extra virgin olive oil — 16 oz bottle','Avocados — 5–6','Almonds — 12 oz bag','Natural peanut butter — 1 jar','Almond butter — 1 jar','Sesame oil — small bottle']},
+      {label:'Produce — all options', items:['Broccoli — 2 heads','Brussels sprouts — 1 bag','Spinach / mixed greens — 2 large bags','Cherry tomatoes — 1 pint','Cucumber — 2','Bell peppers — 4–5','Zucchini — 2','Asparagus — 1 bunch','Cauliflower — 1 head','Mixed stir-fry veg — 2 bags','Frozen berries — 2 lb bag','Lemons — 6','Limes — 4','Green onion — 1 bunch','Jalapeños — 1 small jar']},
+      {label:'Pantry / supplements', items:['Creatine monohydrate — 500g tub','Salt, pepper, garlic powder','Hot sauce / low-cal sauces','Low-sodium soy sauce','Sesame seeds','Salsa — 1 jar','Balsamic vinegar','Electrolyte packets','Coffee','Casein protein powder (optional)']}
+    ]
+  }
+};
+
+// ============================================================
+// PREP GUIDES — one per meal option set (A/B/C)
+// ============================================================
+var PREP_PLANS = {
+  A: [
+    {n:1, text:'Bake 3–4 lbs chicken breast at 400°F for 22–25 min. Brown 2 lbs ground turkey in a skillet with salt, pepper, and garlic powder. Portion into 6–8 oz containers — these cover every lunch and dinner this week.'},
+    {n:2, text:'Cook 3–4 cups dry white rice (yields ~9 cups cooked). Bake 4–5 sweet potatoes at 400°F for 45 min alongside the chicken — multitask your oven time.'},
+    {n:3, text:'Roast a sheet pan of broccoli and zucchini: toss in olive oil + salt, 425°F for 20 min. Reheats well through Thursday.'},
+    {n:4, text:'Hard boil 8–10 eggs. These are grab-and-go protein for busy mornings and extra snacks. Store in the fridge in their shell — peel as needed.'},
+    {n:5, text:'Portion snacks: scoop Greek yogurt into single-serve containers, divide almonds into 20g bags, stack cottage cheese cups. Pre-portioned snacks are the ones you actually eat.'},
+    {n:6, text:'Store pre-washed greens, cherry tomatoes, and cucumber in the fridge. Build salads fresh at dinner — pre-dressed salad goes soggy fast.'}
+  ],
+  B: [
+    {n:1, text:'Brown 2 lbs lean ground beef with taco seasoning, set aside for the beef bowl lunch. Bake 2 lbs chicken breast at 400°F for 22 min for general use across the week.'},
+    {n:2, text:'Cook 3 cups white rice for the taco bowls and stir-fry. Heat 2 cans black beans with cumin and a pinch of salt — store in a container for quick lunch assembly.'},
+    {n:3, text:'Make protein pancake batter: blend 2 cups oats, 4 eggs, and 1 scoop whey until smooth. Pour onto a non-stick pan in batches, cook 2–3 min per side. Stack and refrigerate — reheat in 30 seconds in the microwave.'},
+    {n:4, text:'Hard boil 8 eggs. Wash and chop asparagus and bell peppers — store in containers ready to roast or stir-fry mid-week.'},
+    {n:5, text:'Portion Greek yogurt into containers with a drizzle of maple syrup. Pre-measure almond butter into small containers. Store bananas on the counter — they are your fastest pre-workout carb.'},
+    {n:6, text:'Portion salsa, lime wedges, and jalapeños into small containers so taco bowl assembly at lunch takes under 3 minutes.'}
+  ],
+  C: [
+    {n:1, text:'Bake 3 lbs chicken thighs at 400°F for 28–30 min (thighs need slightly longer than breast). Season with olive oil, salt, pepper, and garlic. Marinate shrimp or cod in olive oil + lemon overnight — cook fresh mid-week.'},
+    {n:2, text:'Cook 2 cups quinoa (or prepare 2 bags of cauliflower rice if going lower-carb). Cook 1 cup brown rice as a second carb option. Store separately so you can mix and match by day type.'},
+    {n:3, text:'Roast brussels sprouts at 425°F for 20–22 min with olive oil + salt. Blanch a bag of mixed stir-fry veg in boiling water for 2 min, drain, and refrigerate — ready to toss in a hot pan any night.'},
+    {n:4, text:'Mix tuna or canned salmon with Greek yogurt, lemon, and dill — make a full batch and refrigerate. This is your Option C lunch ready to go all week.'},
+    {n:5, text:'Portion yogurt into containers. Divide almonds into 20g bags. Pre-make smoothie bags: zip-lock 1 banana + 1/2 cup frozen berries each — dump straight into the blender with protein powder and milk.'},
+    {n:6, text:'Store pre-washed spinach and green onion in the fridge. Slice lemons and limes and keep them in a small container — a squeeze of citrus finishes almost every Option C meal.'}
+  ]
+};
+
 var PHASES = [
-  {name:'Phase 1 — Hypertrophy',weeks:[1,2,3,4],meta:'Build volume · 3–4 sets · 8–12 reps · 65–72% 1RM'},
-  {name:'Phase 2 — Strength',weeks:[5,6,7,8],meta:'Increase load · 4–5 sets · 3–8 reps · 75–85% 1RM'},
-  {name:'Phase 3 — Peaking',weeks:[9,10,11],meta:'Max intensity · 2–5 sets · 1–4 reps · 87–95% 1RM'},
-  {name:'Phase 4 — Deload',weeks:[12],meta:'Full recovery · 2–3 sets · 8–10 reps · 50–60% 1RM'}
+  {name:'Phase 1 — Foundation cut',weeks:[1,2,3,4],meta:'Build work capacity · 3 sets · 12–15 reps · 60–65% load · establish deficit'},
+  {name:'Phase 2 — Volume block',weeks:[5,6,7,8],meta:'Increase volume + load · 4 sets · 10–12 reps · tighten deficit · most fat loss'},
+  {name:'Phase 3 — Definition peak',weeks:[9,10,11],meta:'Highest volume · 4–5 sets · 8–10 reps · deficit maintained · visible changes accelerate'},
+  {name:'Phase 4 — Deload',weeks:[12],meta:'Drop volume 50% · hold deficit · full recovery · prepare for next cycle'}
 ];
 var WEEK_PLANS = {
-  1:{label:'Hypertrophy – foundation',sets:'3 sets',reps:'10–12 reps',load:'~65% 1RM · RPE 7'},
-  2:{label:'Hypertrophy – add load',sets:'3 sets',reps:'10–12 reps',load:'+5 lbs lower / +2.5 lbs upper'},
-  3:{label:'Hypertrophy – add sets',sets:'4 sets',reps:'8–10 reps',load:'~70% · bump sets before weight'},
-  4:{label:'Hypertrophy – consolidate',sets:'4 sets',reps:'8–10 reps',load:'~72.5% · hit top of range ×2'},
-  5:{label:'Strength – intro',sets:'4 sets',reps:'6–8 reps',load:'~75% 1RM · RPE 7–8'},
-  6:{label:'Strength – load increase',sets:'4 sets',reps:'5–6 reps',load:'~80% · add 5–10 lbs lower'},
-  7:{label:'Strength – add sets',sets:'5 sets',reps:'4–5 reps',load:'~82.5% · increase sets first'},
-  8:{label:'Strength – peak week',sets:'5 sets',reps:'3–5 reps',load:'~85% · RPE 8–9 · 1 RIR'},
-  9:{label:'Peaking – heavy triples',sets:'4 sets',reps:'3–4 reps',load:'~87% · RPE 8.5'},
-  10:{label:'Peaking – reduce volume',sets:'3 sets',reps:'2–3 reps',load:'~90% · hold intensity'},
-  11:{label:'Peaking – PR attempts',sets:'2–3 sets',reps:'1–3 reps',load:'~92–95% · attempt PRs'},
-  12:{label:'Deload – full recovery',sets:'2–3 sets',reps:'8–10 reps',load:'~50–60% · RPE 5–6'}
+  1:{label:'Foundation – establish baseline',sets:'3 sets',reps:'12–15 reps',load:'~60% load · RPE 6–7 · learn the movements'},
+  2:{label:'Foundation – add load',sets:'3 sets',reps:'12–15 reps',load:'+2.5 lbs upper / +5 lbs lower'},
+  3:{label:'Foundation – add sets',sets:'4 sets',reps:'12–15 reps',load:'same weight · bump sets before load'},
+  4:{label:'Foundation – consolidate',sets:'4 sets',reps:'10–12 reps',load:'slight load increase · RPE 7–8'},
+  5:{label:'Volume – build intensity',sets:'4 sets',reps:'10–12 reps',load:'+2.5–5 lbs · RPE 7–8'},
+  6:{label:'Volume – push load',sets:'4 sets',reps:'10–12 reps',load:'+2.5–5 lbs · hit top of range 2× before adding'},
+  7:{label:'Volume – add sets',sets:'5 sets',reps:'10–12 reps',load:'hold weight · add 5th set · RPE 8'},
+  8:{label:'Volume – peak week',sets:'5 sets',reps:'8–10 reps',load:'+2.5–5 lbs · RPE 8–9 · 1 RIR'},
+  9:{label:'Definition – high volume',sets:'4 sets',reps:'8–10 reps',load:'~80% · shorter rest 60 sec · pump focus'},
+  10:{label:'Definition – squeeze reps',sets:'4 sets',reps:'8–10 reps',load:'+2.5 lbs · controlled tempo 2 sec down'},
+  11:{label:'Definition – peak effort',sets:'5 sets',reps:'8–10 reps',load:'RPE 9 · leave 1 rep in tank · best physique week'},
+  12:{label:'Deload – full recovery',sets:'2–3 sets',reps:'12–15 reps',load:'~50% · RPE 5 · no grinding'}
 };
 var DAY_LABELS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-var DAY_TYPES  = ['Lower','Shld/Run','Run+Swim','Lower/Brick','Shld+Core','Long Ride','Rest'];
+var DAY_TYPES  = ['Chest/Cardio','Cardio+Abs','Back+Legs','Cardio+Abs','Shld+Arms','Endurance','Rest'];
 
 // ============================================================
 // STATE
@@ -548,6 +721,10 @@ var state = {
   meals: {},
   shop: {},
   tracker: {},
+  lifts: {},
+  mealOpts: {},
+  shopPlan: 'A',
+  prepPlan: 'A',
   currentWeek: 1,
   selectedDay: 0
 };
@@ -587,6 +764,10 @@ function loadFromCloud() {
       if (s.meals)       state.meals       = s.meals;
       if (s.shop)        state.shop        = s.shop;
       if (s.tracker)     state.tracker     = s.tracker;
+      if (s.lifts)       state.lifts       = s.lifts;
+      if (s.mealOpts)    state.mealOpts    = s.mealOpts;
+      if (s.shopPlan)    state.shopPlan    = s.shopPlan;
+      if (s.prepPlan)    state.prepPlan    = s.prepPlan;
       if (s.currentWeek) state.currentWeek = s.currentWeek;
       if (typeof s.selectedDay === 'number') state.selectedDay = s.selectedDay;
     }
@@ -655,6 +836,102 @@ function showPage(pageId, clickedEl) {
   if (clickedEl) clickedEl.classList.add('active');
 }
 
+
+// ============================================================
+// LIFT KEYS — which exercises get input tracking
+// key = unique id stored in state.lifts
+// type: 'lower' = 5/10 lb increments, 'upper' = 2.5/5 lb
+// ============================================================
+var TRACKED_LIFTS = {
+  0: [
+    { key:'bench',    name:'Barbell bench press',      type:'upper' },
+    { key:'incline',  name:'Incline dumbbell press',   type:'upper' },
+    { key:'cablefly', name:'Cable fly (mid)',           type:'upper' }
+  ],
+  2: [
+    { key:'pullup',   name:'Weighted pull-up',          type:'upper' },
+    { key:'squat',    name:'Back squat',                type:'lower' },
+    { key:'row',      name:'Barbell row',               type:'upper' },
+    { key:'rdl',      name:'Romanian deadlift',         type:'lower' },
+    { key:'split',    name:'Bulgarian split squat',     type:'lower' }
+  ],
+  4: [
+    { key:'ohpress',  name:'Seated dumbbell overhead press', type:'upper' },
+    { key:'lateral',  name:'Cable lateral raise',            type:'upper' },
+    { key:'curl',     name:'Barbell curl + tricep pushdown', type:'upper' }
+  ]
+};
+var PHASE_WEEKS = [[1,2,3,4],[5,6,7,8],[9,10,11],[12]];
+
+function getPhaseIndex(week) {
+  for (var p = 0; p < PHASE_WEEKS.length; p++) {
+    if (PHASE_WEEKS[p].indexOf(week) !== -1) return p;
+  }
+  return 0;
+}
+
+function getWeekInPhase(week) {
+  var pi = getPhaseIndex(week);
+  return PHASE_WEEKS[pi].indexOf(week); // 0-based index within phase
+}
+
+// Round to nearest 2.5 lbs
+function round2_5(val) { return Math.round(val / 2.5) * 2.5; }
+
+// Given a starting weight for week 1 of a phase, calculate projected
+// weight for a given week within that phase, for a given lift type.
+// Returns { weight, sets, reps, note }
+function projectLift(startWeight, liftType, phaseIndex, weekInPhase) {
+  var inc = liftType === 'lower' ? 5 : 2.5;
+  var w = parseFloat(startWeight);
+  if (!w || isNaN(w)) return null;
+  if (phaseIndex === 0) {
+    // Foundation cut: start light, add small increments, add sets wk3
+    var weights = [w, round2_5(w+inc), round2_5(w+inc), round2_5(w+inc*2)];
+    var sets    = ['3 sets','3 sets','4 sets','4 sets'];
+    var reps    = ['12–15 reps','12–15 reps','12–15 reps','10–12 reps'];
+    var notes   = ['Establish baseline · RPE 6–7','Add '+inc+' lbs','Bump to 4 sets · same weight','Slight load increase · RPE 7–8'];
+    return { weight:weights[weekInPhase], sets:sets[weekInPhase], reps:reps[weekInPhase], note:notes[weekInPhase] };
+  }
+  if (phaseIndex === 1) {
+    // Volume block: 4–5 sets, 10–12 reps, steadily adding load
+    var weights2 = [w, round2_5(w+inc), round2_5(w+inc*2), round2_5(w+inc*2)];
+    var sets2    = ['4 sets','4 sets','5 sets','5 sets'];
+    var reps2    = ['10–12 reps','10–12 reps','10–12 reps','8–10 reps'];
+    var notes2   = ['RPE 7–8 · build volume','Add '+inc+' lbs · hit top of range 2× first','Add 5th set · hold weight','RPE 8–9 · 1 rep in reserve'];
+    return { weight:weights2[weekInPhase], sets:sets2[weekInPhase], reps:reps2[weekInPhase], note:notes2[weekInPhase] };
+  }
+  if (phaseIndex === 2) {
+    // Definition peak: highest volume, controlled tempo, pump focus
+    var weights3 = [w, round2_5(w+inc), round2_5(w+inc*2)];
+    var sets3    = ['4 sets','4 sets','5 sets'];
+    var reps3    = ['8–10 reps','8–10 reps','8–10 reps'];
+    var notes3   = ['~80% · 60 sec rest · pump focus','Add '+inc+' lbs · 2 sec eccentric','RPE 9 · best physique week · 1 RIR'];
+    return { weight:weights3[Math.min(weekInPhase,2)], sets:sets3[Math.min(weekInPhase,2)], reps:reps3[Math.min(weekInPhase,2)], note:notes3[Math.min(weekInPhase,2)] };
+  }
+  if (phaseIndex === 3) {
+    return { weight:round2_5(w*0.5), sets:'2–3 sets', reps:'12–15 reps', note:'~50% · RPE 5 · no grinding · full recovery' };
+  }
+  return null;
+}
+
+function liftStateKey(liftKey, phaseIndex) {
+  var phases = ['hyp','str','pk','dl'];
+  return phases[phaseIndex] + '_' + liftKey;
+}
+
+function getLiftInput(liftKey, phaseIndex) {
+  if (!state.lifts) return null;
+  return state.lifts[liftStateKey(liftKey, phaseIndex)] || null;
+}
+
+function setLiftInput(liftKey, phaseIndex, field, val) {
+  if (!state.lifts) state.lifts = {};
+  var k = liftStateKey(liftKey, phaseIndex);
+  if (!state.lifts[k]) state.lifts[k] = {};
+  state.lifts[k][field] = val;
+}
+
 // ============================================================
 // WEEK BADGE
 // ============================================================
@@ -662,6 +939,62 @@ function updateWeekBadge() {
   var w = state.currentWeek;
   var phase = w <= 4 ? 'Hypertrophy' : w <= 8 ? 'Strength' : w <= 11 ? 'Peaking' : 'Deload';
   document.getElementById('week-badge').textContent = 'Week ' + w + ' · ' + phase;
+}
+
+// ============================================================
+// AUTO-ADVANCE WEEK
+// Checks if it's a new Monday since last visit. If so, resets
+// the weekly schedule and advances currentWeek by 1.
+// ============================================================
+function checkWeekAdvance() {
+  var now = new Date();
+  // Get Monday of the current week (day 0=Sun,1=Mon...)
+  var day = now.getDay(); // 0=Sun
+  var diffToMon = (day === 0) ? -6 : 1 - day;
+  var thisMonday = new Date(now);
+  thisMonday.setDate(now.getDate() + diffToMon);
+  thisMonday.setHours(0,0,0,0);
+  var thisMondayStr = thisMonday.toISOString().slice(0,10);
+
+  if (!state.lastMonday) {
+    // First visit — just record this Monday, don't advance
+    state.lastMonday = thisMondayStr;
+    save();
+    return;
+  }
+
+  if (state.lastMonday !== thisMondayStr) {
+    // It's a new week — advance and reset
+    var weeksElapsed = Math.round((thisMonday - new Date(state.lastMonday)) / (7 * 24 * 60 * 60 * 1000));
+    if (weeksElapsed > 0 && state.currentWeek < 12) {
+      state.currentWeek = Math.min(12, state.currentWeek + weeksElapsed);
+    }
+    state.days = Array(7).fill(false); // reset weekly checkboxes
+    state.lastMonday = thisMondayStr;
+    save();
+    updateWeekBadge();
+  }
+}
+
+// ============================================================
+// SYNC SCHEDULE → 12-WEEK TRACKER
+// When a day is checked on the Schedule tab, mirror it to
+// the tracker for the current week.
+// ============================================================
+function syncDayToTracker(dayIndex, checked) {
+  var w = state.currentWeek;
+  var key = 'tw' + w + 'd' + dayIndex;
+  state.tracker[key] = checked;
+  // Update tracker UI if it's already rendered
+  var cb = document.querySelector('.wday-cb[data-tk="' + key + '"]');
+  if (cb) cb.classList.toggle('checked', checked);
+  // Update day count badge in tracker
+  var cnt = 0;
+  for (var d = 0; d < 7; d++) { if (state.tracker['tw' + w + 'd' + d]) cnt++; }
+  var dc = document.querySelector('#wkc-' + w + ' .wk-days-count');
+  if (dc) dc.textContent = cnt + '/7';
+  // Update tracker summary stats
+  if (typeof updateTrackerSummary === 'function') updateTrackerSummary();
 }
 
 // ============================================================
@@ -694,50 +1027,233 @@ function renderDetailPanel(i) {
   var btn = document.getElementById('complete-btn');
   btn.textContent = state.days[i] ? '✓ Done' : 'Mark done';
   btn.classList.toggle('done', !!state.days[i]);
+
+  var week    = state.currentWeek;
+  var phaseIdx = getPhaseIndex(week);
+  var weekInPhase = getWeekInPhase(week);
+  var trackedLifts = TRACKED_LIFTS[i] || null;
+  var isPhaseWeek1 = (weekInPhase === 0);
+
   var html = '';
   day.sections.forEach(function(sec) {
     html += '<div class="sec-label">' + sec.label + '</div>';
     sec.exercises.forEach(function(ex) {
-      html += '<div class="ex-row"><span class="ex-name">' + ex.name + (ex.mob ? '<span class="mob-pill">mobility</span>' : '') + '</span><span class="ex-sets">' + ex.sets + '</span></div>';
+      // Find if this exercise is tracked
+      var tracked = null;
+      if (trackedLifts) {
+        trackedLifts.forEach(function(tl){ if (tl.name === ex.name || ex.name.indexOf(tl.name.split(' ')[0]) !== -1) tracked = tl; });
+      }
+
+      if (tracked && !ex.mob) {
+        var proj = null;
+        var inputData = getLiftInput(tracked.key, phaseIdx);
+        if (!isPhaseWeek1 && inputData && inputData.weight) {
+          proj = projectLift(inputData.weight, tracked.type, phaseIdx, weekInPhase);
+        }
+
+        if (isPhaseWeek1) {
+          // Show input fields for week 1 of each phase
+          var savedW = (inputData && inputData.weight) ? inputData.weight : '';
+          var savedR = (inputData && inputData.reps) ? inputData.reps : '';
+          html += '<div class="ex-row" style="flex-direction:column;align-items:stretch;gap:8px;">';
+          html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
+          html += '<span class="ex-name">' + ex.name + '</span>';
+          html += '<span class="ex-sets" style="color:var(--text3);font-size:11px;">Enter your starting weight</span>';
+          html += '</div>';
+          html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+          html += '<div><div class="lift-col-head">Weight (lbs)</div><input class="lift-input" type="number" placeholder="e.g. 185" value="' + savedW + '" data-lift="' + tracked.key + '" data-phase="' + phaseIdx + '" data-field="weight" min="0" step="2.5"></div>';
+          html += '<div><div class="lift-col-head">Reps achieved</div><input class="lift-input" type="number" placeholder="e.g. 10" value="' + savedR + '" data-lift="' + tracked.key + '" data-phase="' + phaseIdx + '" data-field="reps" min="1" step="1"></div>';
+          html += '</div></div>';
+        } else if (proj) {
+          // Show projected weight for this week
+          html += '<div class="ex-row">';
+          html += '<span class="ex-name">' + ex.name + '</span>';
+          html += '<span class="ex-sets"><span style="color:var(--text);font-weight:500;">' + proj.weight + ' lbs</span> &nbsp;·&nbsp; ' + proj.sets + ' &nbsp;·&nbsp; ' + proj.reps + '</span>';
+          html += '</div>';
+          if (proj.note) html += '<div style="font-size:11px;color:var(--text3);padding:2px 12px 6px;">' + proj.note + '</div>';
+        } else {
+          // No input yet — show prompt
+          html += '<div class="ex-row">';
+          html += '<span class="ex-name">' + ex.name + '</span>';
+          html += '<span class="ex-sets" style="color:var(--text3);font-style:italic;">Enter Week ' + PHASE_WEEKS[phaseIdx][0] + ' weight to see projection</span>';
+          html += '</div>';
+        }
+      } else {
+        html += '<div class="ex-row"><span class="ex-name">' + ex.name + (ex.mob ? '<span class="mob-pill">mobility</span>' : '') + '</span><span class="ex-sets">' + ex.sets + '</span></div>';
+      }
     });
   });
+
+  // Projection summary table (weeks 2+ only, when data entered)
+  if (trackedLifts && !isPhaseWeek1) {
+    var phaseWks = PHASE_WEEKS[phaseIdx];
+    var hasAnyData = trackedLifts.some(function(tl){
+      var d = getLiftInput(tl.key, phaseIdx);
+      return d && d.weight;
+    });
+    if (hasAnyData) {
+      html += '<div class="projection-section">';
+      html += '<div class="proj-header">Phase projection — all weeks</div>';
+      trackedLifts.forEach(function(tl) {
+        var inputData = getLiftInput(tl.key, phaseIdx);
+        if (!inputData || !inputData.weight) return;
+        html += '<div class="proj-block">';
+        html += '<div class="proj-lift-name">' + tl.name + ' (starting ' + inputData.weight + ' lbs)</div>';
+        html += '<table class="proj-table"><thead><tr><th>Week</th><th>Weight</th><th>Sets</th><th>Reps</th></tr></thead><tbody>';
+        phaseWks.forEach(function(wk, wi) {
+          var p = projectLift(inputData.weight, tl.type, phaseIdx, wi);
+          if (!p) return;
+          var isCur = (wk === week);
+          html += '<tr' + (isCur ? ' class="current-week"' : '') + '>';
+          html += '<td>Wk ' + wk + (isCur ? ' ◀' : '') + '</td>';
+          html += '<td>' + p.weight + ' lbs</td>';
+          html += '<td>' + p.sets + '</td>';
+          html += '<td>' + p.reps + '</td>';
+          html += '</tr>';
+        });
+        html += '</tbody></table></div>';
+      });
+      html += '</div>';
+    }
+  }
+
   if (day.note) html += '<div class="note-box">' + day.note + '</div>';
   document.getElementById('detail-body').innerHTML = html;
+
+  // Wire up lift input listeners
+  document.querySelectorAll('.lift-input').forEach(function(inp) {
+    inp.addEventListener('change', function() {
+      var liftKey  = inp.dataset.lift;
+      var phaseI   = parseInt(inp.dataset.phase);
+      var field    = inp.dataset.field;
+      var val      = parseFloat(inp.value) || '';
+      setLiftInput(liftKey, phaseI, field, val);
+      save();
+      // Re-render so projection table appears immediately if on week 1
+      renderDetailPanel(state.selectedDay);
+    });
+  });
 }
 
 // ============================================================
 // NUTRITION
 // ============================================================
-function renderMeals(meals, containerId, prefix) {
+function getTodayDayType() {
+  var day = new Date().getDay(); // 0=Sun,1=Mon,...
+  var map = [2,0,1,0,1,0,2]; // Sun=easy,Mon=hard,Tue=std,Wed=easy... wait redefine below
+  // 0=Mon,1=Tue,2=Wed,3=Thu,4=Fri,5=Sat,6=Sun in DAY_TYPE_MAP
+  // JS getDay: 0=Sun,1=Mon,...,6=Sat → remap
+  var jsToOur = [6,0,1,2,3,4,5];
+  return DAY_TYPE_MAP[jsToOur[day]];
+}
+
+function renderNutrition(dtype) {
+  if (!state.mealOpts) state.mealOpts = {};
+  var plan = MEAL_PLANS[dtype];
+  var todayType = getTodayDayType();
   var html = '';
-  meals.forEach(function(meal, mi) {
-    html += '<div class="meal-card"><div class="meal-head"><span class="meal-name">' + meal.name + '</span><span class="meal-kcal">' + meal.kcal + '</span></div>';
-    meal.items.forEach(function(item, ii) {
-      var key = prefix + '-' + mi + '-' + ii;
-      var checked = state.meals[key] ? 'checked' : '';
-      html += '<div class="food-row"><div class="food-cb ' + checked + '" data-key="' + key + '">✓</div><div class="food-label">' + item + '</div></div>';
+  // Macro grid
+  html += '<div class="macro-grid">';
+  html += '<div class="macro-card"><div class="macro-val">' + plan.macros.kcal + '</div><div class="macro-unit">kcal</div><div class="macro-lbl">Calories</div></div>';
+  html += '<div class="macro-card"><div class="macro-val">' + plan.macros.protein + '</div><div class="macro-unit">grams</div><div class="macro-lbl">Protein</div></div>';
+  html += '<div class="macro-card"><div class="macro-val">' + plan.macros.carbs + '</div><div class="macro-unit">grams</div><div class="macro-lbl">Carbs</div></div>';
+  html += '<div class="macro-card"><div class="macro-val">' + plan.macros.fat + '</div><div class="macro-unit">grams</div><div class="macro-lbl">Fat</div></div>';
+  html += '</div>';
+  // Today badge
+  var todayLabel = dtype === todayType ? ' <span class="today-badge">today</span>' : '';
+  html += '<div class="meal-day-note">' + plan.note + todayLabel + '</div>';
+  // Meals
+  plan.meals.forEach(function(meal, mi) {
+    var optKey = dtype + '-opt-' + mi;
+    var activeOpt = state.mealOpts[optKey] || 0; // 0,1,2 = A,B,C
+    var opt = meal.options[activeOpt];
+    html += '<div class="meal-card">';
+    html += '<div class="meal-head"><span class="meal-name">' + meal.name + '</span><span class="meal-kcal">' + meal.kcal + '</span></div>';
+    // Option toggle tabs
+    html += '<div class="meal-opt-tabs">';
+    meal.options.forEach(function(o, oi) {
+      html += '<button class="meal-opt-tab' + (oi === activeOpt ? ' active' : '') + '" data-dtype="' + dtype + '" data-mi="' + mi + '" data-oi="' + oi + '">Option ' + o.label + '</button>';
+    });
+    html += '</div>';
+    // Food items with checkboxes
+    opt.items.forEach(function(item, ii) {
+      var cbKey = dtype + '-' + mi + '-' + activeOpt + '-' + ii;
+      var checked = state.meals[cbKey] ? 'checked' : '';
+      html += '<div class="food-row"><div class="food-cb ' + checked + '" data-key="' + cbKey + '">✓</div><div class="food-label">' + item + '</div></div>';
     });
     html += '</div>';
   });
-  var el = document.getElementById(containerId);
-  if (el) el.innerHTML = html;
+  document.getElementById('nutrition-body').innerHTML = html;
+}
+
+function initNutritionTabs() {
+  // Auto-select today's day type on load
+  var todayType = getTodayDayType();
+  document.querySelectorAll('#meal-tabs .mdt').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.dtype === todayType);
+  });
+  renderNutrition(todayType);
+
+  document.getElementById('meal-tabs').addEventListener('click', function(e) {
+    var btn = e.target.closest('.mdt');
+    if (!btn) return;
+    document.querySelectorAll('#meal-tabs .mdt').forEach(function(t){ t.classList.remove('active'); });
+    btn.classList.add('active');
+    renderNutrition(btn.dataset.dtype);
+  });
+
+  document.getElementById('page-nutrition').addEventListener('click', function(e) {
+    // Option tab switch
+    var optBtn = e.target.closest('.meal-opt-tab');
+    if (optBtn) {
+      if (!state.mealOpts) state.mealOpts = {};
+      var optKey = optBtn.dataset.dtype + '-opt-' + optBtn.dataset.mi;
+      state.mealOpts[optKey] = parseInt(optBtn.dataset.oi);
+      save();
+      renderNutrition(optBtn.dataset.dtype);
+      return;
+    }
+    // Food checkbox
+    var cb = e.target.closest('.food-cb');
+    if (cb) {
+      state.meals[cb.dataset.key] = !state.meals[cb.dataset.key];
+      save(); cb.classList.toggle('checked', !!state.meals[cb.dataset.key]);
+    }
+  });
 }
 
 // ============================================================
 // SHOPPING
 // ============================================================
-function renderShopping() {
+function renderShopping(plan) {
+  plan = plan || state.shopPlan || 'A';
+  state.shopPlan = plan;
+  var planData = SHOP_PLANS[plan];
   var html = '';
-  SHOP_CATS.forEach(function(cat, ci) {
+  planData.cats.forEach(function(cat, ci) {
     html += '<div class="shop-cat"><div class="shop-cat-title">' + cat.label + '</div>';
     cat.items.forEach(function(item, ii) {
-      var key = 'shop-' + ci + '-' + ii;
+      var key = 'shop-' + plan + '-' + ci + '-' + ii;
       var checked = state.shop[key] ? 'checked' : '';
       html += '<div class="shop-item ' + checked + '" data-key="' + key + '"><div class="shop-cb">✓</div><div class="shop-item-label">' + item + '</div></div>';
     });
     html += '</div>';
   });
   document.getElementById('shop-grid').innerHTML = html;
+}
+
+// ============================================================
+// MEAL PREP
+// ============================================================
+function renderPrep(plan) {
+  plan = plan || state.prepPlan || 'A';
+  state.prepPlan = plan;
+  var steps = PREP_PLANS[plan];
+  var html = '';
+  steps.forEach(function(s) {
+    html += '<div class="prep-step"><div class="prep-num">' + s.n + '</div><div>' + s.text + '</div></div>';
+  });
+  document.getElementById('prep-body').innerHTML = html;
 }
 
 // ============================================================
@@ -799,6 +1315,7 @@ function renderTracker() {
 // ============================================================
 function initUI() {
   updateWeekBadge();
+  checkWeekAdvance();
 
   // Nav
   document.getElementById('nav-tabs').addEventListener('click', function(e) {
@@ -814,6 +1331,7 @@ function initUI() {
       e.stopPropagation();
       var idx = parseInt(chk.dataset.check);
       state.days[idx] = !state.days[idx];
+      syncDayToTracker(idx, state.days[idx]);
       save(); renderDayTiles();
       if (idx === state.selectedDay) renderDetailPanel(idx);
       return;
@@ -826,6 +1344,7 @@ function initUI() {
   document.getElementById('complete-btn').addEventListener('click', function() {
     var i = state.selectedDay;
     state.days[i] = !state.days[i];
+    syncDayToTracker(i, state.days[i]);
     save(); renderDayTiles(); renderDetailPanel(i);
   });
   document.getElementById('reset-week-btn').addEventListener('click', function() {
@@ -847,33 +1366,36 @@ function initUI() {
     if (panel) panel.classList.add('active');
   });
 
-  // Nutrition tabs
-  document.getElementById('meal-tabs').addEventListener('click', function(e) {
-    var btn = e.target.closest('.mdt');
-    if (!btn) return;
-    document.querySelectorAll('.mdt').forEach(function(t){ t.classList.remove('active'); });
-    document.querySelectorAll('.meal-sec').forEach(function(s){ s.classList.remove('active'); });
-    btn.classList.add('active');
-    var sec = document.getElementById('meal-'+btn.dataset.meal);
-    if (sec) sec.classList.add('active');
-  });
-  document.getElementById('page-nutrition').addEventListener('click', function(e) {
-    var cb = e.target.closest('.food-cb');
-    if (!cb) return;
-    var key = cb.dataset.key;
-    state.meals[key] = !state.meals[key];
-    save(); cb.classList.toggle('checked', !!state.meals[key]);
-  });
-  renderMeals(MEALS_TRAIN, 'meals-train-body', 'tr');
-  renderMeals(MEALS_REST, 'meals-rest-body', 'rs');
+  // Nutrition
+  initNutritionTabs();
 
   // Prep
-  var prepHtml = '';
-  PREP_STEPS.forEach(function(s){ prepHtml += '<div class="prep-step"><div class="prep-num">'+s.n+'</div><div>'+s.text+'</div></div>'; });
-  document.getElementById('prep-body').innerHTML = prepHtml;
+  // Sync prep tab highlight to saved plan
+  var activePrepPlan = state.prepPlan || 'A';
+  document.querySelectorAll('#prep-tabs .mdt').forEach(function(t){ t.classList.toggle('active', t.dataset.pplan === activePrepPlan); });
+  renderPrep(activePrepPlan);
+  document.getElementById('prep-tabs').addEventListener('click', function(e) {
+    var btn = e.target.closest('.mdt');
+    if (!btn) return;
+    document.querySelectorAll('#prep-tabs .mdt').forEach(function(t){ t.classList.remove('active'); });
+    btn.classList.add('active');
+    renderPrep(btn.dataset.pplan);
+    save();
+  });
 
   // Shopping
-  renderShopping();
+  // Sync shop tab highlight to saved plan
+  var activeShopPlan = state.shopPlan || 'A';
+  document.querySelectorAll('#shop-tabs .mdt').forEach(function(t){ t.classList.toggle('active', t.dataset.splan === activeShopPlan); });
+  renderShopping(activeShopPlan);
+  document.getElementById('shop-tabs').addEventListener('click', function(e) {
+    var btn = e.target.closest('.mdt');
+    if (!btn) return;
+    document.querySelectorAll('#shop-tabs .mdt').forEach(function(t){ t.classList.remove('active'); });
+    btn.classList.add('active');
+    renderShopping(btn.dataset.splan);
+    save();
+  });
   document.getElementById('shop-grid').addEventListener('click', function(e) {
     var item = e.target.closest('.shop-item');
     if (!item) return;
@@ -884,7 +1406,7 @@ function initUI() {
   });
   document.getElementById('reset-shop-btn').addEventListener('click', function() {
     if (!confirm('Clear all shopping checkmarks?')) return;
-    state.shop = {}; save(); renderShopping();
+    state.shop = {}; save(); renderShopping(state.shopPlan || 'A');
   });
 
   // Tracker
