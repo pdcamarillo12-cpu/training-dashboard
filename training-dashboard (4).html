@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Training Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f0f0f; --bg2:#141414; --bg3:#1a1a1a;
+  --card:#1c1c1c; --card2:#202020;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
+  --text:#e0e0e0; --text2:#888; --text3:#444;
+  --r:8px; --r2:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;min-height:100vh;}
+h1,h2,h3{font-family:'Fraunces',serif;font-weight:300;}
+
+/* SYNC BANNER */
+#sync-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;padding:8px 20px;font-size:12px;font-family:'DM Mono',monospace;text-align:center;transition:all 0.3s;display:none;}
+#sync-bar.saving{display:block;background:#1c1c1c;color:var(--text3);border-top:1px solid var(--border);}
+#sync-bar.saved{display:block;background:#1c1c1c;color:var(--text2);border-top:1px solid var(--border);}
+#sync-bar.error{display:block;background:#1c1c1c;color:#c0392b;border-top:1px solid var(--border);}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;gap:1.5rem;height:60px;}
+.nav-brand{font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--text);letter-spacing:-0.02em;white-space:nowrap;}
+.nav-tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{padding:6px 14px;border-radius:6px;font-size:13px;font-weight:400;color:var(--text2);cursor:pointer;white-space:nowrap;border:1px solid transparent;transition:all 0.15s;background:none;font-family:'DM Sans',sans-serif;}
+.nav-tab:hover{color:var(--text);background:var(--bg3);}
+.nav-tab.active{color:var(--text);background:var(--bg3);border-color:var(--border2);}
+.week-badge{margin-left:auto;font-family:'DM Mono',monospace;font-size:12px;color:var(--text3);white-space:nowrap;}
+
+/* PAGES */
+.page{display:none;padding:2rem;max-width:1100px;margin:0 auto;padding-bottom:3rem;}
+.page.active{display:block;}
+
+/* HERO */
+.hero{margin-bottom:2.5rem;}
+.hero h1{font-size:clamp(26px,5vw,44px);font-weight:300;line-height:1.1;margin-bottom:8px;font-style:italic;}
+.hero p{color:var(--text2);font-size:14px;max-width:500px;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:2rem;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.stat-val{font-family:'Fraunces',serif;font-size:28px;font-weight:300;color:var(--text);line-height:1;margin-bottom:4px;}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;}
+
+/* LEGEND */
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:1rem;}
+.leg{font-size:12px;color:var(--text3);}
+
+/* WEEK GRID */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:1.5rem;}
+.day-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.15s;}
+.day-tile:hover{border-color:var(--border2);background:var(--card2);}
+.day-tile.selected{border-color:var(--border2);background:var(--card2);}
+.day-tile.done{opacity:0.45;}
+.day-tile.done .day-check{background:var(--text2);border-color:var(--text2);color:var(--bg);}
+.day-lbl{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.day-icon{font-size:18px;margin-bottom:4px;}
+.day-type{font-size:10px;line-height:1.3;color:var(--text2);margin-bottom:8px;}
+.day-check{width:20px;height:20px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:10px;color:var(--text3);transition:all 0.15s;cursor:pointer;}
+.day-check:hover{border-color:var(--text2);color:var(--text2);}
+
+/* DETAIL PANEL */
+.detail-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:1.5rem;margin-bottom:1.5rem;}
+.detail-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.25rem;}
+.detail-title{font-family:'Fraunces',serif;font-size:20px;font-weight:300;}
+.detail-sub{font-size:13px;color:var(--text2);margin-top:3px;}
+.complete-btn{padding:7px 16px;border-radius:8px;border:1px solid var(--border2);color:var(--text2);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+.complete-btn:hover{border-color:var(--text);color:var(--text);}
+.complete-btn.done{background:var(--card2);color:var(--text);border-color:var(--border2);}
+.sec-label{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin:1rem 0 6px;}
+.ex-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg3);border-radius:8px;margin-bottom:4px;gap:12px;}
+.ex-name{font-size:13px;font-weight:500;color:var(--text);}
+.ex-sets{font-size:12px;color:var(--text2);text-align:right;flex-shrink:0;max-width:55%;}
+.mob-pill{display:inline-block;font-size:9px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,0.07);color:var(--text3);margin-left:5px;vertical-align:middle;}
+.note-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--text2);margin-top:12px;line-height:1.6;}
+
+/* PROGRESS BAR */
+.bar-wrap{background:var(--bg3);border-radius:999px;height:3px;margin-top:8px;}
+.bar-fill{height:3px;border-radius:999px;background:var(--text2);transition:width 0.4s;}
+
+/* BUTTONS */
+.reset-btn{font-size:12px;color:var(--text3);background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+.reset-btn:hover{border-color:var(--border2);color:var(--text2);}
+.section-title{font-family:'Fraunces',serif;font-size:26px;font-weight:300;font-style:italic;margin-bottom:4px;}
+.section-desc{font-size:13px;color:var(--text2);margin-bottom:1.5rem;}
+.divider{height:1px;background:var(--border);margin:1.5rem 0;}
+
+/* OVERLOAD */
+.phase-tabs{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.phase-tab{padding:7px 14px;border-radius:8px;border:1px solid var(--border);font-size:13px;color:var(--text2);cursor:pointer;background:var(--card);transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+.phase-tab:hover{border-color:var(--border2);color:var(--text);}
+.phase-tab.active{border-color:var(--border2);color:var(--text);background:var(--card2);}
+.phase-panel{display:none;}
+.phase-panel.active{display:block;}
+.col-heads{display:grid;grid-template-columns:80px 1fr 1fr 1fr;gap:10px;padding:0 14px;margin-bottom:4px;}
+.col-head{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);}
+.week-row-ol{display:grid;grid-template-columns:80px 1fr 1fr 1fr;gap:10px;align-items:center;padding:10px 14px;background:var(--bg3);border-radius:8px;margin-bottom:6px;font-size:13px;}
+.wr-wk{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);text-transform:uppercase;}
+.wr-sets{font-weight:500;color:var(--text);}
+.wr-reps{color:var(--text2);}
+.wr-load{color:var(--text2);font-size:12px;}
+.rule-card{display:flex;gap:12px;padding:12px 14px;background:var(--card2);border-radius:8px;margin-bottom:6px;font-size:13px;color:var(--text2);line-height:1.55;}
+
+/* NUTRITION */
+.meal-day-tabs{display:flex;gap:6px;margin-bottom:1.25rem;}
+.mdt{padding:6px 14px;border-radius:8px;border:1px solid var(--border);font-size:13px;color:var(--text2);cursor:pointer;background:var(--card);transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+.mdt:hover{color:var(--text);border-color:var(--border2);}
+.mdt.active{border-color:var(--border2);color:var(--text);background:var(--card2);}
+.meal-sec{display:none;}
+.meal-sec.active{display:block;}
+.macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;}
+.macro-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;}
+.macro-val{font-family:'Fraunces',serif;font-size:26px;font-weight:300;color:var(--text);}
+.macro-unit{font-size:11px;color:var(--text3);margin-top:1px;}
+.macro-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-top:4px;}
+.meal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.25rem;margin-bottom:10px;}
+.meal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.meal-name{font-size:14px;font-weight:500;}
+.meal-kcal{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--bg3);padding:3px 8px;border-radius:6px;}
+.food-row{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border-bottom:1px solid var(--border);}
+.food-row:last-child{border-bottom:none;}
+.food-cb{width:16px;height:16px;border-radius:4px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.15s;font-size:10px;color:transparent;margin-top:2px;}
+.food-cb:hover{border-color:var(--text2);}
+.food-cb.checked{background:var(--text2);border-color:var(--text2);color:var(--bg);}
+.food-label{font-size:13px;color:var(--text2);line-height:1.4;}
+
+/* SHOPPING */
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
+.shop-cat{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.25rem;}
+.shop-cat-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;color:var(--text2);}
+.shop-item{display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.shop-item:last-child{border-bottom:none;}
+.shop-item.checked{opacity:0.4;}
+.shop-cb{width:16px;height:16px;border-radius:4px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all 0.15s;flex-shrink:0;margin-top:1px;}
+.shop-item.checked .shop-cb{background:var(--text2);border-color:var(--text2);color:var(--bg);}
+.shop-item-label{font-size:13px;color:var(--text2);line-height:1.4;}
+.shop-item.checked .shop-item-label{text-decoration:line-through;color:var(--text3);}
+
+/* PREP */
+.prep-step{display:flex;gap:14px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;font-size:13px;color:var(--text2);line-height:1.6;}
+.prep-num{font-family:'Fraunces',serif;font-size:20px;font-weight:300;color:var(--text2);flex-shrink:0;line-height:1.2;}
+
+/* 12-WEEK TRACKER */
+.tracker-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:1.5rem;}
+.ov-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center;}
+.ov-val{font-family:'Fraunces',serif;font-size:24px;font-weight:300;color:var(--text);line-height:1;margin-bottom:3px;}
+.ov-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);}
+.overall-bar-wrap{margin-bottom:2rem;}
+.overall-bar-lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:6px;font-family:'DM Mono',monospace;}
+.overall-bar-bg{background:var(--bg3);border-radius:999px;height:3px;}
+.overall-bar-fill{height:3px;border-radius:999px;background:var(--text2);transition:width 0.5s;}
+.phase-block{margin-bottom:2rem;}
+.phase-hdr{display:flex;align-items:baseline;gap:12px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.phase-nm{font-family:'Fraunces',serif;font-size:18px;font-weight:300;}
+.phase-mt{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;}
+.phase-pc{font-size:12px;color:var(--text2);margin-left:auto;font-family:'DM Mono',monospace;}
+.wk-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:6px;}
+.wk-card.is-current{border-color:var(--border2);background:var(--card2);}
+.wk-card.is-done{opacity:0.5;}
+.wk-top{display:flex;align-items:center;gap:12px;cursor:pointer;}
+.wk-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);min-width:54px;}
+.wk-title{font-size:13px;font-weight:500;flex:1;}
+.wk-days-count{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-right:6px;}
+.wk-btn{font-size:11px;color:var(--text3);padding:2px 8px;border:1px solid var(--border);border-radius:4px;cursor:pointer;background:none;font-family:'DM Sans',sans-serif;transition:all 0.15s;white-space:nowrap;}
+.wk-btn:hover{border-color:var(--border2);color:var(--text2);}
+.wk-btn.done{color:var(--text2);border-color:var(--border2);background:var(--card2);}
+.wk-expand{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.wk-day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:10px;}
+.wday{text-align:center;padding:6px 4px;border-radius:6px;background:var(--bg3);}
+.wday-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);margin-bottom:4px;font-family:'DM Mono',monospace;}
+.wday-type{font-size:9px;color:var(--text3);line-height:1.3;margin-bottom:5px;}
+.wday-cb{width:16px;height:16px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin:0 auto;cursor:pointer;font-size:9px;color:transparent;transition:all 0.15s;}
+.wday-cb:hover{border-color:var(--text2);}
+.wday-cb.checked{background:var(--text2);border-color:var(--text2);color:var(--bg);}
+.wk-note{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:12px;padding:8px 10px;resize:none;outline:none;line-height:1.5;margin-top:8px;}
+.wk-note:focus{border-color:var(--border2);}
+.wk-note::placeholder{color:var(--text3);}
+.wk-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.wk-load{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
+
+/* LOADING OVERLAY */
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:999;}
+#loading.hidden{display:none;}
+.spinner{width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--text2);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-txt{font-family:'DM Mono',monospace;font-size:13px;color:var(--text3);}
+
+@media(max-width:640px){
+  .week-grid{grid-template-columns:repeat(4,1fr);}
+  .macro-grid{grid-template-columns:repeat(2,1fr);}
+  nav{padding:0 1rem;gap:1rem;}
+  .page{padding:1.25rem;padding-bottom:3rem;}
+  .col-heads,.week-row-ol{grid-template-columns:60px 1fr 1fr;}
+  .col-heads .col-head:last-child,.week-row-ol .wr-load{display:none;}
+  .wk-day-grid{grid-template-columns:repeat(4,1fr);}
+}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <div class="loading-txt">Loading your dashboard...</div>
+</div>
+
+<div id="sync-bar"></div>
+
+<nav>
+  <div class="nav-brand">TRAIN</div>
+  <div class="nav-tabs" id="nav-tabs">
+    <button class="nav-tab active" data-page="schedule">Schedule</button>
+    <button class="nav-tab" data-page="overload">Progression</button>
+    <button class="nav-tab" data-page="nutrition">Nutrition</button>
+    <button class="nav-tab" data-page="prep">Meal Prep</button>
+    <button class="nav-tab" data-page="shopping">Shopping</button>
+    <button class="nav-tab" data-page="tracker">12-Week Tracker</button>
+  </div>
+  <div class="week-badge" id="week-badge">Week 1 · Hypertrophy</div>
+</nav>
+
+<!-- SCHEDULE -->
+<div id="page-schedule" class="page active">
+  <div class="hero"><h1>Weekly training plan</h1><p>Tap a day to see the full workout. Check it off when done.</p></div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val" id="stat-done">0</div><div class="stat-label">Days done</div></div>
+    <div class="stat-card"><div class="stat-val">4</div><div class="stat-label">Strength sessions</div></div>
+    <div class="stat-card"><div class="stat-val">3</div><div class="stat-label">Cardio sessions</div></div>
+    <div class="stat-card"><div class="stat-val" id="stat-pct">0%</div><div class="stat-label">Week complete</div><div class="bar-wrap"><div class="bar-fill" id="prog-bar" style="width:0%"></div></div></div>
+  </div>
+  <div class="legend">
+    <div class="leg">Mon / Thu — Lower body</div>
+    <div class="leg">· Tue / Fri — Shoulder &amp; upper</div>
+    <div class="leg">· Wed — Run + swim</div>
+    <div class="leg">· Sat — Long ride</div>
+    <div class="leg">· Sun — Rest</div>
+  </div>
+  <div class="week-grid" id="week-grid">
+    <div class="day-tile" data-day="0"><div class="day-lbl">Mon</div><div class="day-icon">🏋️</div><div class="day-type">Lower body</div><div class="day-check" data-check="0">✓</div></div>
+    <div class="day-tile" data-day="1"><div class="day-lbl">Tue</div><div class="day-icon">💪</div><div class="day-type">Shoulder + run</div><div class="day-check" data-check="1">✓</div></div>
+    <div class="day-tile" data-day="2"><div class="day-lbl">Wed</div><div class="day-icon">🏃</div><div class="day-type">Easy run + swim</div><div class="day-check" data-check="2">✓</div></div>
+    <div class="day-tile" data-day="3"><div class="day-lbl">Thu</div><div class="day-icon">🏋️</div><div class="day-type">Lower + brick</div><div class="day-check" data-check="3">✓</div></div>
+    <div class="day-tile" data-day="4"><div class="day-lbl">Fri</div><div class="day-icon">💪</div><div class="day-type">Shoulder + core</div><div class="day-check" data-check="4">✓</div></div>
+    <div class="day-tile" data-day="5"><div class="day-lbl">Sat</div><div class="day-icon">🚴</div><div class="day-type">Long ride</div><div class="day-check" data-check="5">✓</div></div>
+    <div class="day-tile" data-day="6"><div class="day-lbl">Sun</div><div class="day-icon">😴</div><div class="day-type">Rest / mobility</div><div class="day-check" data-check="6">✓</div></div>
+  </div>
+  <div class="detail-panel">
+    <div class="detail-header">
+      <div><div class="detail-title" id="detail-title">Monday — Lower body</div><div class="detail-sub" id="detail-sub">65–75 min · Squat focus</div></div>
+      <button class="complete-btn" id="complete-btn">Mark done</button>
+    </div>
+    <div id="detail-body"></div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-size:13px;color:var(--text3);">Resets each Monday.</div>
+    <button class="reset-btn" id="reset-week-btn">Reset week</button>
+  </div>
+</div>
+
+<!-- OVERLOAD -->
+<div id="page-overload" class="page">
+  <div class="section-title">Progressive overload</div>
+  <div class="section-desc">Your 12-week progression plan. Click each phase to see exact weekly targets.</div>
+  <div class="phase-tabs" id="phase-tabs">
+    <button class="phase-tab active" data-phase="hyp">Phase 1 — Hypertrophy (wks 1–4)</button>
+    <button class="phase-tab" data-phase="str">Phase 2 — Strength (wks 5–8)</button>
+    <button class="phase-tab" data-phase="pk">Phase 3 — Peaking (wks 9–11)</button>
+    <button class="phase-tab" data-phase="dl">Phase 4 — Deload (wk 12)</button>
+  </div>
+  <div class="detail-panel" style="margin-bottom:1.5rem;">
+    <div id="phase-hyp" class="phase-panel active">
+      <div class="detail-title" style="margin-bottom:4px;">Hypertrophy block</div>
+      <div class="detail-sub" style="margin-bottom:1rem;">Build work capacity, add muscle, establish movement patterns at moderate load.</div>
+      <div class="col-heads"><div class="col-head">Week</div><div class="col-head">Sets</div><div class="col-head">Reps</div><div class="col-head">Load / RPE</div></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 1</span><span class="wr-sets">3 sets</span><span class="wr-reps">10–12 reps</span><span class="wr-load">~65% 1RM · RPE 7</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 2</span><span class="wr-sets">3 sets</span><span class="wr-reps">10–12 reps</span><span class="wr-load">+5 lbs lower / +2.5 lbs upper</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 3</span><span class="wr-sets">4 sets</span><span class="wr-reps">8–10 reps</span><span class="wr-load">~70% · add sets before weight</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 4</span><span class="wr-sets">4 sets</span><span class="wr-reps">8–10 reps</span><span class="wr-load">~72.5% · hit top of range 2× first</span></div>
+    </div>
+    <div id="phase-str" class="phase-panel">
+      <div class="detail-title" style="margin-bottom:4px;">Strength block</div>
+      <div class="detail-sub" style="margin-bottom:1rem;">Increase neural efficiency and peak force output. Heavier loads, shorter rep ranges.</div>
+      <div class="col-heads"><div class="col-head">Week</div><div class="col-head">Sets</div><div class="col-head">Reps</div><div class="col-head">Load / RPE</div></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 5</span><span class="wr-sets">4 sets</span><span class="wr-reps">6–8 reps</span><span class="wr-load">~75% 1RM · RPE 7–8</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 6</span><span class="wr-sets">4 sets</span><span class="wr-reps">5–6 reps</span><span class="wr-load">~80% · add 5–10 lbs lower / 2.5–5 upper</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 7</span><span class="wr-sets">5 sets</span><span class="wr-reps">4–5 reps</span><span class="wr-load">~82.5% · increase sets first</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 8</span><span class="wr-sets">5 sets</span><span class="wr-reps">3–5 reps</span><span class="wr-load">~85% · RPE 8–9 · 1 rep in reserve</span></div>
+    </div>
+    <div id="phase-pk" class="phase-panel">
+      <div class="detail-title" style="margin-bottom:4px;">Peaking block</div>
+      <div class="detail-sub" style="margin-bottom:1rem;">Express maximum strength. Volume drops, intensity peaks. Attempt PRs on primary lifts.</div>
+      <div class="col-heads"><div class="col-head">Week</div><div class="col-head">Sets</div><div class="col-head">Reps</div><div class="col-head">Load / RPE</div></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 9</span><span class="wr-sets">4 sets</span><span class="wr-reps">3–4 reps</span><span class="wr-load">~87% 1RM · RPE 8.5</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 10</span><span class="wr-sets">3 sets</span><span class="wr-reps">2–3 reps</span><span class="wr-load">~90% · reduce volume, hold intensity</span></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 11</span><span class="wr-sets">2–3 sets</span><span class="wr-reps">1–3 reps</span><span class="wr-load">~92–95% · PR attempts on main lifts</span></div>
+    </div>
+    <div id="phase-dl" class="phase-panel">
+      <div class="detail-title" style="margin-bottom:4px;">Deload week</div>
+      <div class="detail-sub" style="margin-bottom:1rem;">Full tissue and CNS recovery. Where 11 weeks of adaptation consolidates. Non-negotiable.</div>
+      <div class="col-heads"><div class="col-head">Week</div><div class="col-head">Sets</div><div class="col-head">Reps</div><div class="col-head">Load / RPE</div></div>
+      <div class="week-row-ol"><span class="wr-wk">Week 12</span><span class="wr-sets">2–3 sets</span><span class="wr-reps">8–10 reps</span><span class="wr-load">~50–60% · RPE 5–6 · no grinding</span></div>
+    </div>
+  </div>
+  <div class="sec-label" style="margin-bottom:8px;">Universal rules</div>
+  <div class="rule-card"><div>📈</div><div>Add weight only when you complete all reps with 1–2 reps left in the tank across every set. Two sessions at the top of the rep range = green light.</div></div>
+  <div class="rule-card"><div>🔀</div><div>Two paths to progress: more weight or more sets/reps. Always increase volume before load — add sets before adding plates.</div></div>
+  <div class="rule-card"><div>📝</div><div>Log every session. Date, exercise, sets × reps × weight. A notes app is enough. You cannot overload what you don't track.</div></div>
+  <div class="rule-card"><div>⏱️</div><div>Rest periods matter. Hypertrophy block: 90–120 sec. Strength block: 2.5–4 min. Rushing rest kills strength gains.</div></div>
+  <div class="rule-card"><div>📉</div><div>If performance drops two sessions in a row — drop load 10%, recover, climb again. That's not failure, that's the process.</div></div>
+  <div class="rule-card"><div>🔄</div><div>After week 12, restart the cycle. New starting weights should be 5–10% higher than cycle one. That's how you compound progress.</div></div>
+</div>
+
+<!-- NUTRITION -->
+<div id="page-nutrition" class="page">
+  <div class="section-title">Nutrition plan</div>
+  <div class="section-desc">Daily macro targets and full meal plans. Check off meals as you eat them.</div>
+  <div class="meal-day-tabs" id="meal-tabs">
+    <button class="mdt active" data-meal="train">Training day</button>
+    <button class="mdt" data-meal="rest">Rest day</button>
+  </div>
+  <div id="meal-train" class="meal-sec active">
+    <div class="macro-grid">
+      <div class="macro-card"><div class="macro-val">2650</div><div class="macro-unit">kcal</div><div class="macro-lbl">Calories</div></div>
+      <div class="macro-card"><div class="macro-val">196</div><div class="macro-unit">grams</div><div class="macro-lbl">Protein</div></div>
+      <div class="macro-card"><div class="macro-val">290</div><div class="macro-unit">grams</div><div class="macro-lbl">Carbs</div></div>
+      <div class="macro-card"><div class="macro-val">75</div><div class="macro-unit">grams</div><div class="macro-lbl">Fat</div></div>
+    </div>
+    <div id="meals-train-body"></div>
+  </div>
+  <div id="meal-rest" class="meal-sec">
+    <div class="macro-grid">
+      <div class="macro-card"><div class="macro-val">2450</div><div class="macro-unit">kcal</div><div class="macro-lbl">Calories</div></div>
+      <div class="macro-card"><div class="macro-val">196</div><div class="macro-unit">grams</div><div class="macro-lbl">Protein</div></div>
+      <div class="macro-card"><div class="macro-val">240</div><div class="macro-unit">grams</div><div class="macro-lbl">Carbs</div></div>
+      <div class="macro-card"><div class="macro-val">70</div><div class="macro-unit">grams</div><div class="macro-lbl">Fat</div></div>
+    </div>
+    <div id="meals-rest-body"></div>
+  </div>
+</div>
+
+<!-- MEAL PREP -->
+<div id="page-prep" class="page">
+  <div class="section-title">Sunday meal prep</div>
+  <div class="section-desc">~90 minutes Sunday batch cook. Feeds the whole week.</div>
+  <div id="prep-body"></div>
+</div>
+
+<!-- SHOPPING -->
+<div id="page-shopping" class="page">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:.5rem;flex-wrap:wrap;">
+    <div><div class="section-title">Shopping list</div><div class="section-desc" style="margin-bottom:0;">Tap items to check them off as you shop.</div></div>
+    <button class="reset-btn" id="reset-shop-btn">Reset list</button>
+  </div>
+  <div class="divider"></div>
+  <div class="shop-grid" id="shop-grid"></div>
+</div>
+
+<!-- 12-WEEK TRACKER -->
+<div id="page-tracker" class="page">
+  <div class="hero"><h1>12-week tracker</h1><p>Log every week across all four phases. Check off days, mark weeks complete, add notes.</p></div>
+  <div class="tracker-overview">
+    <div class="ov-card"><div class="ov-val" id="ov-weeks">0</div><div class="ov-lbl">Weeks complete</div></div>
+    <div class="ov-card"><div class="ov-val" id="ov-days">0</div><div class="ov-lbl">Days logged</div></div>
+    <div class="ov-card"><div class="ov-val" id="ov-pct">0%</div><div class="ov-lbl">Plan progress</div></div>
+    <div class="ov-card"><div class="ov-val" id="ov-phase">1</div><div class="ov-lbl">Current phase</div></div>
+  </div>
+  <div class="overall-bar-wrap">
+    <div class="overall-bar-lbl"><span>Overall progress</span><span id="ov-bar-lbl">0 / 12 weeks</span></div>
+    <div class="overall-bar-bg"><div class="overall-bar-fill" id="ov-bar" style="width:0%"></div></div>
+  </div>
+  <div id="tracker-body"></div>
+</div>
+
+<script>
+// ============================================================
+// CONFIG — JSONBin
+// ============================================================
+// ── Supabase config ──────────────────────────────────────────
+// After creating your Supabase project, paste your values below.
+// Settings → API → Project URL and anon public key.
+var SUPABASE_URL = 'PASTE_YOUR_PROJECT_URL_HERE';
+var SUPABASE_KEY = 'PASTE_YOUR_ANON_PUBLIC_KEY_HERE';
+var saveTimer = null;
+
+// ============================================================
+// DATA
+// ============================================================
+var DAYS_DATA = [
+  { title:'Monday — Lower body', sub:'65–75 min · Squat focus · 3–5 sets · 5–10 reps',
+    sections:[
+      { label:'Mobility warm-up (10 min)', exercises:[
+        {name:'Hip 90/90 switches',sets:'2 × 8 each side',mob:true},
+        {name:"World's greatest stretch",sets:'5 reps each side',mob:true},
+        {name:'Banded hip flexor stretch',sets:'60 sec each side',mob:true}]},
+      { label:'Main lifts', exercises:[
+        {name:'Back squat',sets:'4 × 5–6 @ 80%+ 1RM'},
+        {name:'Romanian deadlift',sets:'3 × 8–10'},
+        {name:'Bulgarian split squat',sets:'3 × 8 each leg'}]},
+      { label:'Accessories', exercises:[
+        {name:'Nordic hamstring curl',sets:'3 × 6–8'},
+        {name:'Hip thrust',sets:'3 × 10–12'},
+        {name:'Standing calf raise',sets:'3 × 15'}]}]},
+  { title:'Tuesday — Shoulder / Upper + Tempo Run', sub:'Lift 60–65 min · Tempo run 40–50 min · ~2 hrs total',
+    sections:[
+      { label:'Shoulder mobility warm-up (10 min)', exercises:[
+        {name:'Band pull-aparts',sets:'3 × 15 — opens chest, activates rear delt',mob:true},
+        {name:'Shoulder CARs',sets:'2 × 5 each arm — slow full range',mob:true},
+        {name:'Wall slides',sets:'2 × 10 — scapular control',mob:true}]},
+      { label:'Shoulder-focused main lifts', exercises:[
+        {name:'Seated dumbbell overhead press',sets:'4 × 6–8'},
+        {name:'Arnold press',sets:'3 × 10 — hits all 3 delt heads'},
+        {name:'Weighted pull-up',sets:'4 × 5–8'}]},
+      { label:'Accessories', exercises:[
+        {name:'Lateral raise (cable or DB)',sets:'4 × 12–15 — medial delt isolation'},
+        {name:'Face pull',sets:'3 × 15 — rear delt + external rotation'},
+        {name:'Prone Y-T-W raises',sets:'2 × 10 each — scapular stability',mob:true},
+        {name:'Cable row (wide grip)',sets:'3 × 10–12'}]},
+      { label:'Cardio — tempo run (after lift)', exercises:[
+        {name:'Easy warm-up jog',sets:'10 min · zone 2'},
+        {name:'Tempo intervals',sets:'4 × 6 min @ comfortably hard · 90 sec jog recovery'},
+        {name:'Cool-down',sets:'10 min easy'}]}],
+    note:'Leave at least 30 min between finishing the lift and starting your run. Eat a small carb snack in between.'},
+  { title:'Wednesday — Easy Run + Swim', sub:'Active recovery · Zone 1–2 only · No intensity',
+    sections:[
+      { label:'Run (morning)', exercises:[{name:'Easy zone 2 run',sets:'35–45 min · conversational pace throughout'}]},
+      { label:'Swim (afternoon / evening)', exercises:[
+        {name:'Catch-up drill',sets:'4 × 50m — timing and stroke length'},
+        {name:'Pull buoy set',sets:'4 × 100m — upper body endurance'},
+        {name:'Steady main set',sets:'6 × 75m @ easy effort'}]}],
+    note:'Wednesday is your lightest day. If beaten up from Mon/Tue, skip the swim and just run easy.'},
+  { title:'Thursday — Lower Body + Brick Run', sub:'Lift 60–65 min · Brick run 20 min · ~90 min total',
+    sections:[
+      { label:'Mobility warm-up (8 min)', exercises:[
+        {name:'Pigeon pose hold',sets:'60 sec each side — hip flexor and glute prep',mob:true},
+        {name:'Ankle circles + calf raises',sets:'2 × 10 each — ankle dorsiflexion',mob:true},
+        {name:'Cat-cow + thoracic extension',sets:'10 reps — spine prep',mob:true}]},
+      { label:'Main lifts', exercises:[
+        {name:'Trap bar deadlift',sets:'4 × 4–6 @ 80%+ 1RM'},
+        {name:'Leg press',sets:'3 × 10–12 — quad volume'},
+        {name:'Walking lunge (DB)',sets:'3 × 10 each leg'}]},
+      { label:'Accessories', exercises:[
+        {name:'Glute-ham raise or leg curl',sets:'3 × 8–10'},
+        {name:'Single-leg RDL (DB)',sets:'3 × 8 each — balance + posterior chain'}]},
+      { label:'Brick run (immediately after lift)', exercises:[
+        {name:'Brick run',sets:'20 min easy · zone 2 · simulates race fatigue'}]}],
+    note:"The brick run is intentionally short and easy — goal is run-off-legs adaptation, not fitness stress. Don't push the pace."},
+  { title:'Friday — Shoulder / Upper + Core', sub:'70–80 min · Volume upper · Shoulder emphasis · Core + mobility finisher',
+    sections:[
+      { label:'Shoulder mobility warm-up (10 min)', exercises:[
+        {name:'Doorframe pec stretch',sets:'2 × 45 sec — opens anterior shoulder',mob:true},
+        {name:'Sleeper stretch',sets:'2 × 45 sec each side — posterior capsule',mob:true},
+        {name:'Band dislocates',sets:'2 × 10 — overhead shoulder range',mob:true}]},
+      { label:'Shoulder-focused main lifts', exercises:[
+        {name:'Barbell overhead press (standing)',sets:'4 × 5–6 @ heavy — full-body stability'},
+        {name:'Incline dumbbell press',sets:'3 × 10 — upper chest + anterior delt'},
+        {name:'Cable lateral raise',sets:'4 × 15 — constant tension on medial delt'},
+        {name:'Rear delt fly (machine or DB)',sets:'3 × 15 — posterior delt balance'}]},
+      { label:'Pull accessories', exercises:[
+        {name:'Chest-supported DB row',sets:'3 × 10–12'},
+        {name:'Single-arm cable row',sets:'3 × 12 each'},
+        {name:'Shrugs (DB or barbell)',sets:'3 × 12 — upper trap for shoulder girdle'}]},
+      { label:'Core + mobility finisher (15 min)', exercises:[
+        {name:'Pallof press',sets:'3 × 12 each side — anti-rotation core',mob:true},
+        {name:'Dead bug',sets:'3 × 8 each side — deep core stability'},
+        {name:'Thoracic spine rotation (seated)',sets:'2 × 10 each side',mob:true},
+        {name:"Child's pose + lat stretch",sets:'60 sec each — cool-down',mob:true}]}]},
+  { title:'Saturday — Long Ride', sub:'90–150 min · Aerobic base · Zone 2–3 · No time limit',
+    sections:[
+      { label:'Structure', exercises:[
+        {name:'Warm-up spin',sets:'15 min · easy zone 1–2'},
+        {name:'Main ride',sets:'60–120 min steady zone 2–3 · 2–3 short surges ok'},
+        {name:'Cool-down',sets:'10–15 min easy spin'}]}],
+    note:'Every 3rd Saturday add a 15–20 min easy brick run off the bike. Eat and hydrate aggressively before and during.'},
+  { title:'Sunday — Rest + Mobility', sub:'No structured training · Body resets for the week ahead',
+    sections:[
+      { label:'Optional mobility flow (20–30 min)', exercises:[
+        {name:'Hip flexor lunge stretch',sets:'90 sec each side',mob:true},
+        {name:'Figure-4 glute stretch',sets:'90 sec each side',mob:true},
+        {name:'Doorframe shoulder stretch',sets:'60 sec each arm',mob:true},
+        {name:'Thoracic foam roll',sets:'2 min up and down thoracic spine',mob:true},
+        {name:'Hamstring doorframe stretch',sets:'90 sec each leg',mob:true},
+        {name:'Diaphragmatic breathing',sets:'5 min · nervous system downregulation'}]}],
+    note:'Sunday mobility is genuinely optional. If sore, do it. If feeling great, just rest. Sleep is still the highest-value recovery tool.'}
+];
+
+var MEALS_TRAIN = [
+  {name:'🌅 Breakfast — pre-workout',kcal:'~620 kcal · 45g protein',items:['5 whole eggs scrambled','1 cup oats cooked, topped with banana + drizzle honey','Black coffee']},
+  {name:'🕛 Lunch',kcal:'~700 kcal · 55g protein',items:['8 oz ground turkey or chicken breast in olive oil + seasoning','1.5 cups cooked white rice','1 cup roasted broccoli or zucchini','Hot sauce or low-calorie sauce']},
+  {name:'🍎 Afternoon snack',kcal:'~350 kcal · 20g protein',items:['1 cup full-fat Greek yogurt','1/4 cup granola + 1 serving berries or banana']},
+  {name:'🌙 Dinner',kcal:'~750 kcal · 55g protein',items:['8–10 oz salmon, ground beef (90/10), or lean steak','1 large sweet potato or 1.5 cups rice','Large salad: greens, cucumber, cherry tomatoes, 1/2 avocado, olive oil + lemon']},
+  {name:'🌛 Evening snack',kcal:'~230 kcal · 25g protein',items:['1 cup cottage cheese or casein protein shake','Small handful almonds (~20g)']}
+];
+var MEALS_REST = [
+  {name:'🌅 Breakfast',kcal:'~520 kcal · 40g protein',items:['4 whole eggs scrambled','2 slices sourdough toast + small handful berries','Black coffee']},
+  {name:'🕛 Lunch',kcal:'~600 kcal · 50g protein',items:['8 oz chicken breast or canned salmon','1 cup cooked rice or 1 medium sweet potato','Big side salad with olive oil dressing']},
+  {name:'🍎 Snack',kcal:'~250 kcal · 20g protein',items:['1 cup Greek yogurt + berries (skip granola on rest day)']},
+  {name:'🌙 Dinner',kcal:'~650 kcal · 50g protein',items:['8 oz salmon or lean beef','Large roasted vegetable mix (broccoli, asparagus, peppers)','1/2 avocado + side salad']},
+  {name:'🌛 Evening snack',kcal:'~230 kcal · 25g protein',items:['1 cup cottage cheese + small handful almonds']}
+];
+var PREP_STEPS = [
+  {n:1,text:'Cook 4–5 lbs of protein in bulk. Bake chicken at 400°F for 22–25 min. Brown 2 lbs ground turkey in a skillet. Season simply — salt, pepper, garlic powder. Portion into 6–8 oz containers.'},
+  {n:2,text:'Cook a large pot of white rice — 3–4 cups dry yields ~8–10 cups cooked. Alternatively bake 4–5 sweet potatoes at 400°F for 45 min alongside the chicken.'},
+  {n:3,text:'Roast a full sheet pan of vegetables — broccoli, zucchini, peppers. Toss in olive oil + salt, roast at 425°F for 20–22 min. Reheats well through Thursday.'},
+  {n:4,text:'Hard boil 8–10 eggs. These are your grab-and-go protein for busy mornings or extra snacks. Stays fresh all week in the fridge.'},
+  {n:5,text:'Portion snacks into containers. Scoop Greek yogurt into single-serve tubs. Divide nuts into 20g bags. Stack cottage cheese cups. Pre-portioned snacks = snacks that actually get eaten.'},
+  {n:6,text:'Buy pre-washed salad greens, cherry tomatoes, cucumber. Store in the fridge and build the salad fresh at dinner — pre-dressed salad gets soggy fast.'}
+];
+var SHOP_CATS = [
+  {label:'Proteins',items:['Chicken breast — 3–4 lbs','Ground turkey (93/7) — 2 lbs','Salmon fillets — 1.5–2 lbs','Eggs — 2 dozen','Greek yogurt (full fat) — 32 oz tub','Cottage cheese — 2 × 16 oz tubs','Canned tuna or salmon — 4 cans']},
+  {label:'Carbohydrates',items:['White rice — 5 lb bag','Oats (rolled) — large canister','Sweet potatoes — 4–5 medium','Bananas — 1 bunch (6–8)','Sourdough or whole grain bread — 1 loaf','Granola — 1 bag','Honey — small jar']},
+  {label:'Fats',items:['Extra virgin olive oil — 16 oz bottle','Avocados — 3–4','Almonds (raw or lightly salted) — 12 oz bag','Natural peanut or almond butter — 1 jar']},
+  {label:'Produce',items:['Broccoli — 2 large heads','Mixed greens / spinach — large bag','Cherry tomatoes — 1 pint','Cucumber — 2','Bell peppers — 3–4 (any color)','Zucchini — 2','Frozen berries — 2 lb bag','Lemons — 3–4']},
+  {label:'Pantry / supplements',items:['Creatine monohydrate — 500g tub','Salt, black pepper, garlic powder','Hot sauce / low-cal sauces','Electrolyte packets (long ride)','Coffee','Balsamic or apple cider vinegar','Casein protein powder (optional)']}
+];
+var PHASES = [
+  {name:'Phase 1 — Hypertrophy',weeks:[1,2,3,4],meta:'Build volume · 3–4 sets · 8–12 reps · 65–72% 1RM'},
+  {name:'Phase 2 — Strength',weeks:[5,6,7,8],meta:'Increase load · 4–5 sets · 3–8 reps · 75–85% 1RM'},
+  {name:'Phase 3 — Peaking',weeks:[9,10,11],meta:'Max intensity · 2–5 sets · 1–4 reps · 87–95% 1RM'},
+  {name:'Phase 4 — Deload',weeks:[12],meta:'Full recovery · 2–3 sets · 8–10 reps · 50–60% 1RM'}
+];
+var WEEK_PLANS = {
+  1:{label:'Hypertrophy – foundation',sets:'3 sets',reps:'10–12 reps',load:'~65% 1RM · RPE 7'},
+  2:{label:'Hypertrophy – add load',sets:'3 sets',reps:'10–12 reps',load:'+5 lbs lower / +2.5 lbs upper'},
+  3:{label:'Hypertrophy – add sets',sets:'4 sets',reps:'8–10 reps',load:'~70% · bump sets before weight'},
+  4:{label:'Hypertrophy – consolidate',sets:'4 sets',reps:'8–10 reps',load:'~72.5% · hit top of range ×2'},
+  5:{label:'Strength – intro',sets:'4 sets',reps:'6–8 reps',load:'~75% 1RM · RPE 7–8'},
+  6:{label:'Strength – load increase',sets:'4 sets',reps:'5–6 reps',load:'~80% · add 5–10 lbs lower'},
+  7:{label:'Strength – add sets',sets:'5 sets',reps:'4–5 reps',load:'~82.5% · increase sets first'},
+  8:{label:'Strength – peak week',sets:'5 sets',reps:'3–5 reps',load:'~85% · RPE 8–9 · 1 RIR'},
+  9:{label:'Peaking – heavy triples',sets:'4 sets',reps:'3–4 reps',load:'~87% · RPE 8.5'},
+  10:{label:'Peaking – reduce volume',sets:'3 sets',reps:'2–3 reps',load:'~90% · hold intensity'},
+  11:{label:'Peaking – PR attempts',sets:'2–3 sets',reps:'1–3 reps',load:'~92–95% · attempt PRs'},
+  12:{label:'Deload – full recovery',sets:'2–3 sets',reps:'8–10 reps',load:'~50–60% · RPE 5–6'}
+};
+var DAY_LABELS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+var DAY_TYPES  = ['Lower','Shld/Run','Run+Swim','Lower/Brick','Shld+Core','Long Ride','Rest'];
+
+// ============================================================
+// STATE
+// ============================================================
+var state = {
+  days: Array(7).fill(false),
+  meals: {},
+  shop: {},
+  tracker: {},
+  currentWeek: 1,
+  selectedDay: 0
+};
+
+// ============================================================
+// SYNC — JSONBin
+// ============================================================
+function syncBar(msg, type) {
+  var bar = document.getElementById('sync-bar');
+  bar.textContent = msg;
+  bar.className = type;
+  if (type === 'saved') {
+    setTimeout(function(){ bar.className = ''; bar.style.display = 'none'; }, 2000);
+  }
+}
+
+function loadFromCloud() {
+  // If credentials not set yet, just run locally
+  if (SUPABASE_URL.indexOf('PASTE') !== -1) {
+    var local = localStorage.getItem('trainState');
+    if (local) { try { var s=JSON.parse(local); if(s.days)state.days=s.days; if(s.meals)state.meals=s.meals; if(s.shop)state.shop=s.shop; if(s.tracker)state.tracker=s.tracker; if(s.currentWeek)state.currentWeek=s.currentWeek; if(typeof s.selectedDay==='number')state.selectedDay=s.selectedDay; } catch(e){} }
+    document.getElementById('loading').classList.add('hidden');
+    initUI();
+    return;
+  }
+  fetch(SUPABASE_URL + '/rest/v1/dashboard?id=eq.1&select=data', {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY
+    }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(rows) {
+    if (rows && rows.length > 0 && rows[0].data) {
+      var s = JSON.parse(rows[0].data);
+      if (s.days)        state.days        = s.days;
+      if (s.meals)       state.meals       = s.meals;
+      if (s.shop)        state.shop        = s.shop;
+      if (s.tracker)     state.tracker     = s.tracker;
+      if (s.currentWeek) state.currentWeek = s.currentWeek;
+      if (typeof s.selectedDay === 'number') state.selectedDay = s.selectedDay;
+    }
+    document.getElementById('loading').classList.add('hidden');
+    initUI();
+  })
+  .catch(function() {
+    var local = localStorage.getItem('trainState');
+    if (local) { try { var s=JSON.parse(local); if(s.days)state.days=s.days; if(s.meals)state.meals=s.meals; if(s.shop)state.shop=s.shop; if(s.tracker)state.tracker=s.tracker; if(s.currentWeek)state.currentWeek=s.currentWeek; if(typeof s.selectedDay==='number')state.selectedDay=s.selectedDay; } catch(e){} }
+    document.getElementById('loading').classList.add('hidden');
+    syncBar('Cloud unavailable — showing local data', 'error');
+    initUI();
+  });
+}
+
+function saveToCloud() {
+  localStorage.setItem('trainState', JSON.stringify(state));
+  if (SUPABASE_URL.indexOf('PASTE') !== -1) return; // no credentials yet
+  syncBar('Saving...', 'saving');
+  var payload = JSON.stringify({ data: JSON.stringify(state) });
+  // Try update first (upsert row id=1)
+  fetch(SUPABASE_URL + '/rest/v1/dashboard?id=eq.1', {
+    method: 'PATCH',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    },
+    body: payload
+  })
+  .then(function(r) {
+    if (r.status === 200 || r.status === 204) {
+      syncBar('Saved & synced ✓', 'saved');
+    } else {
+      // Row doesn't exist yet — insert it
+      return fetch(SUPABASE_URL + '/rest/v1/dashboard', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ id: 1, data: JSON.stringify(state) })
+      }).then(function(){ syncBar('Saved & synced ✓', 'saved'); });
+    }
+  })
+  .catch(function(){ syncBar('Sync error — saved locally only', 'error'); });
+}
+
+function save() {
+  localStorage.setItem('trainState', JSON.stringify(state));
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveToCloud, 1200); // debounce — waits 1.2s after last change
+}
+
+// ============================================================
+// NAV
+// ============================================================
+function showPage(pageId, clickedEl) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
+  var pg = document.getElementById('page-' + pageId);
+  if (pg) pg.classList.add('active');
+  if (clickedEl) clickedEl.classList.add('active');
+}
+
+// ============================================================
+// WEEK BADGE
+// ============================================================
+function updateWeekBadge() {
+  var w = state.currentWeek;
+  var phase = w <= 4 ? 'Hypertrophy' : w <= 8 ? 'Strength' : w <= 11 ? 'Peaking' : 'Deload';
+  document.getElementById('week-badge').textContent = 'Week ' + w + ' · ' + phase;
+}
+
+// ============================================================
+// SCHEDULE
+// ============================================================
+function renderDayTiles() {
+  for (var i = 0; i < 7; i++) {
+    var tile = document.querySelector('[data-day="' + i + '"]');
+    var chk  = document.querySelector('[data-check="' + i + '"]');
+    if (!tile || !chk) continue;
+    tile.classList.toggle('done', !!state.days[i]);
+    tile.classList.toggle('selected', i === state.selectedDay);
+    if (state.days[i]) {
+      chk.style.background='var(--text2)'; chk.style.borderColor='var(--text2)'; chk.style.color='var(--bg)';
+    } else {
+      chk.style.background=''; chk.style.borderColor=''; chk.style.color='';
+    }
+  }
+  var done = state.days.filter(Boolean).length;
+  document.getElementById('stat-done').textContent = done;
+  var pct = Math.round(done / 6 * 100);
+  document.getElementById('stat-pct').textContent = pct + '%';
+  document.getElementById('prog-bar').style.width = pct + '%';
+}
+
+function renderDetailPanel(i) {
+  var day = DAYS_DATA[i];
+  document.getElementById('detail-title').textContent = day.title;
+  document.getElementById('detail-sub').textContent = day.sub;
+  var btn = document.getElementById('complete-btn');
+  btn.textContent = state.days[i] ? '✓ Done' : 'Mark done';
+  btn.classList.toggle('done', !!state.days[i]);
+  var html = '';
+  day.sections.forEach(function(sec) {
+    html += '<div class="sec-label">' + sec.label + '</div>';
+    sec.exercises.forEach(function(ex) {
+      html += '<div class="ex-row"><span class="ex-name">' + ex.name + (ex.mob ? '<span class="mob-pill">mobility</span>' : '') + '</span><span class="ex-sets">' + ex.sets + '</span></div>';
+    });
+  });
+  if (day.note) html += '<div class="note-box">' + day.note + '</div>';
+  document.getElementById('detail-body').innerHTML = html;
+}
+
+// ============================================================
+// NUTRITION
+// ============================================================
+function renderMeals(meals, containerId, prefix) {
+  var html = '';
+  meals.forEach(function(meal, mi) {
+    html += '<div class="meal-card"><div class="meal-head"><span class="meal-name">' + meal.name + '</span><span class="meal-kcal">' + meal.kcal + '</span></div>';
+    meal.items.forEach(function(item, ii) {
+      var key = prefix + '-' + mi + '-' + ii;
+      var checked = state.meals[key] ? 'checked' : '';
+      html += '<div class="food-row"><div class="food-cb ' + checked + '" data-key="' + key + '">✓</div><div class="food-label">' + item + '</div></div>';
+    });
+    html += '</div>';
+  });
+  var el = document.getElementById(containerId);
+  if (el) el.innerHTML = html;
+}
+
+// ============================================================
+// SHOPPING
+// ============================================================
+function renderShopping() {
+  var html = '';
+  SHOP_CATS.forEach(function(cat, ci) {
+    html += '<div class="shop-cat"><div class="shop-cat-title">' + cat.label + '</div>';
+    cat.items.forEach(function(item, ii) {
+      var key = 'shop-' + ci + '-' + ii;
+      var checked = state.shop[key] ? 'checked' : '';
+      html += '<div class="shop-item ' + checked + '" data-key="' + key + '"><div class="shop-cb">✓</div><div class="shop-item-label">' + item + '</div></div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('shop-grid').innerHTML = html;
+}
+
+// ============================================================
+// TRACKER
+// ============================================================
+function tkKey(w,d){ return 'tw'+w+'d'+d; }
+function doneKey(w){ return 'tw'+w+'done'; }
+function noteKey(w){ return 'tw'+w+'note'; }
+
+function trackerStats() {
+  var days=0, weeks=0;
+  for (var w=1;w<=12;w++) {
+    for (var d=0;d<7;d++) { if (state.tracker[tkKey(w,d)]) days++; }
+    if (state.tracker[doneKey(w)]) weeks++;
+  }
+  return {days:days,weeks:weeks};
+}
+
+function updateTrackerSummary() {
+  var s = trackerStats();
+  document.getElementById('ov-weeks').textContent = s.weeks;
+  document.getElementById('ov-days').textContent = s.days;
+  var pct = Math.round(s.weeks/12*100);
+  document.getElementById('ov-pct').textContent = pct+'%';
+  document.getElementById('ov-phase').textContent = s.weeks<4?1:s.weeks<8?2:s.weeks<11?3:4;
+  document.getElementById('ov-bar').style.width = pct+'%';
+  document.getElementById('ov-bar-lbl').textContent = s.weeks+' / 12 weeks';
+}
+
+function renderTracker() {
+  updateTrackerSummary();
+  var html='';
+  PHASES.forEach(function(phase) {
+    var pDone = phase.weeks.filter(function(w){ return !!state.tracker[doneKey(w)]; }).length;
+    var pPct  = Math.round(pDone/phase.weeks.length*100);
+    html += '<div class="phase-block">';
+    html += '<div class="phase-hdr"><div class="phase-nm">'+phase.name+'</div><div class="phase-mt">'+phase.meta+'</div><div class="phase-pc">'+pDone+'/'+phase.weeks.length+' · '+pPct+'%</div></div>';
+    phase.weeks.forEach(function(w) {
+      var plan=WEEK_PLANS[w], isDone=!!state.tracker[doneKey(w)], isCur=(state.currentWeek===w), note=state.tracker[noteKey(w)]||'', dCnt=0;
+      for (var d=0;d<7;d++) { if (state.tracker[tkKey(w,d)]) dCnt++; }
+      html += '<div class="wk-card'+(isDone?' is-done':'')+(isCur?' is-current':'')+'" id="wkc-'+w+'">';
+      html += '<div class="wk-top" data-expand="'+w+'"><span class="wk-num">Week '+w+(isCur?' ★':'')+'</span><span class="wk-title">'+plan.label+'</span><span class="wk-days-count">'+dCnt+'/7</span><button class="wk-btn'+(isDone?' done':'')+'" data-done="'+w+'">'+(isDone?'✓ Done':'Mark done')+'</button></div>';
+      html += '<div class="wk-expand" id="wke-'+w+'"><div class="wk-day-grid">';
+      DAY_LABELS.forEach(function(dl,di) {
+        var key=tkKey(w,di), checked=state.tracker[key]?'checked':'';
+        html += '<div class="wday"><div class="wday-lbl">'+dl+'</div><div class="wday-type">'+DAY_TYPES[di]+'</div><div class="wday-cb '+checked+'" data-tk="'+key+'" data-tw="'+w+'" data-td="'+di+'">✓</div></div>';
+      });
+      html += '</div><div class="wk-foot"><span class="wk-load">'+plan.sets+' · '+plan.reps+' · '+plan.load+'</span><button class="wk-btn'+(isCur?' done':'')+'" data-setcur="'+w+'">'+(isCur?'★ Current':'Set as current')+'</button></div>';
+      html += '<textarea class="wk-note" data-note="'+w+'" rows="2" placeholder="Week '+w+' notes — PRs, how you felt, adjustments...">'+note+'</textarea>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('tracker-body').innerHTML = html;
+}
+
+// ============================================================
+// INIT — wire up all events after DOM ready
+// ============================================================
+function initUI() {
+  updateWeekBadge();
+
+  // Nav
+  document.getElementById('nav-tabs').addEventListener('click', function(e) {
+    var tab = e.target.closest('.nav-tab');
+    if (tab) showPage(tab.dataset.page, tab);
+  });
+
+  // Schedule — day tiles
+  document.getElementById('week-grid').addEventListener('click', function(e) {
+    var chk  = e.target.closest('.day-check');
+    var tile = e.target.closest('.day-tile');
+    if (chk) {
+      e.stopPropagation();
+      var idx = parseInt(chk.dataset.check);
+      state.days[idx] = !state.days[idx];
+      save(); renderDayTiles();
+      if (idx === state.selectedDay) renderDetailPanel(idx);
+      return;
+    }
+    if (tile) {
+      state.selectedDay = parseInt(tile.dataset.day);
+      save(); renderDayTiles(); renderDetailPanel(state.selectedDay);
+    }
+  });
+  document.getElementById('complete-btn').addEventListener('click', function() {
+    var i = state.selectedDay;
+    state.days[i] = !state.days[i];
+    save(); renderDayTiles(); renderDetailPanel(i);
+  });
+  document.getElementById('reset-week-btn').addEventListener('click', function() {
+    if (!confirm('Reset all day checkboxes for this week?')) return;
+    state.days = Array(7).fill(false);
+    save(); renderDayTiles();
+  });
+  renderDayTiles();
+  renderDetailPanel(0);
+
+  // Overload phase tabs
+  document.getElementById('phase-tabs').addEventListener('click', function(e) {
+    var tab = e.target.closest('.phase-tab');
+    if (!tab) return;
+    document.querySelectorAll('.phase-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.phase-panel').forEach(function(p){ p.classList.remove('active'); });
+    tab.classList.add('active');
+    var panel = document.getElementById('phase-'+tab.dataset.phase);
+    if (panel) panel.classList.add('active');
+  });
+
+  // Nutrition tabs
+  document.getElementById('meal-tabs').addEventListener('click', function(e) {
+    var btn = e.target.closest('.mdt');
+    if (!btn) return;
+    document.querySelectorAll('.mdt').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.meal-sec').forEach(function(s){ s.classList.remove('active'); });
+    btn.classList.add('active');
+    var sec = document.getElementById('meal-'+btn.dataset.meal);
+    if (sec) sec.classList.add('active');
+  });
+  document.getElementById('page-nutrition').addEventListener('click', function(e) {
+    var cb = e.target.closest('.food-cb');
+    if (!cb) return;
+    var key = cb.dataset.key;
+    state.meals[key] = !state.meals[key];
+    save(); cb.classList.toggle('checked', !!state.meals[key]);
+  });
+  renderMeals(MEALS_TRAIN, 'meals-train-body', 'tr');
+  renderMeals(MEALS_REST, 'meals-rest-body', 'rs');
+
+  // Prep
+  var prepHtml = '';
+  PREP_STEPS.forEach(function(s){ prepHtml += '<div class="prep-step"><div class="prep-num">'+s.n+'</div><div>'+s.text+'</div></div>'; });
+  document.getElementById('prep-body').innerHTML = prepHtml;
+
+  // Shopping
+  renderShopping();
+  document.getElementById('shop-grid').addEventListener('click', function(e) {
+    var item = e.target.closest('.shop-item');
+    if (!item) return;
+    var key = item.dataset.key;
+    state.shop[key] = !state.shop[key];
+    save();
+    item.classList.toggle('checked', !!state.shop[key]);
+  });
+  document.getElementById('reset-shop-btn').addEventListener('click', function() {
+    if (!confirm('Clear all shopping checkmarks?')) return;
+    state.shop = {}; save(); renderShopping();
+  });
+
+  // Tracker
+  renderTracker();
+  document.getElementById('tracker-body').addEventListener('click', function(e) {
+    var expandEl = e.target.closest('[data-expand]');
+    if (expandEl && !e.target.closest('button')) {
+      var exp = document.getElementById('wke-'+expandEl.dataset.expand);
+      if (exp) exp.style.display = exp.style.display==='block'?'none':'block';
+      return;
+    }
+    var doneBtn = e.target.closest('[data-done]');
+    if (doneBtn) {
+      e.stopPropagation();
+      var w2 = parseInt(doneBtn.dataset.done);
+      state.tracker[doneKey(w2)] = !state.tracker[doneKey(w2)];
+      save(); renderTracker();
+      var exp2 = document.getElementById('wke-'+w2);
+      if (exp2) exp2.style.display='block';
+      return;
+    }
+    var curBtn = e.target.closest('[data-setcur]');
+    if (curBtn) {
+      e.stopPropagation();
+      state.currentWeek = parseInt(curBtn.dataset.setcur);
+      save(); updateWeekBadge(); renderTracker();
+      var exp3 = document.getElementById('wke-'+state.currentWeek);
+      if (exp3) exp3.style.display='block';
+      return;
+    }
+    var cb = e.target.closest('.wday-cb');
+    if (cb) {
+      var key=cb.dataset.tk, tw=parseInt(cb.dataset.tw);
+      state.tracker[key] = !state.tracker[key];
+      save(); cb.classList.toggle('checked', !!state.tracker[key]);
+      var cnt=0;
+      for (var d=0;d<7;d++) { if (state.tracker[tkKey(tw,d)]) cnt++; }
+      var dc = document.querySelector('#wkc-'+tw+' .wk-days-count');
+      if (dc) dc.textContent = cnt+'/7';
+      updateTrackerSummary();
+    }
+  });
+  document.getElementById('tracker-body').addEventListener('change', function(e) {
+    var ta = e.target.closest('.wk-note');
+    if (ta) { state.tracker[noteKey(parseInt(ta.dataset.note))] = ta.value; save(); }
+  });
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  loadFromCloud();
+});
+</script>
+</body>
+</html>
