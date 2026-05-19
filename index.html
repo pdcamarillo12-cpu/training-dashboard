@@ -380,9 +380,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
 // ============================================================
 // CONFIG — JSONBin
 // ============================================================
-var JSONBIN_API_KEY = '$2a$10$z2Ckr2YEr2LrIlneRU0j/.lbK5redi0rMhvhCspwOcQj3D1RY8aHm';
-var JSONBIN_BIN_ID  = null; // created on first save
-var LOCALSTORAGE_BIN_KEY = 'training_bin_id';
+// ── Supabase config ──────────────────────────────────────────
+// After creating your Supabase project, paste your values below.
+// Settings → API → Project URL and anon public key.
+var SUPABASE_URL = 'PASTE_YOUR_PROJECT_URL_HERE';
+var SUPABASE_KEY = 'PASTE_YOUR_ANON_PUBLIC_KEY_HERE';
 var saveTimer = null;
 
 // ============================================================
@@ -562,28 +564,25 @@ function syncBar(msg, type) {
   }
 }
 
-function getBinId() {
-  if (JSONBIN_BIN_ID) return JSONBIN_BIN_ID;
-  var stored = localStorage.getItem(LOCALSTORAGE_BIN_KEY);
-  if (stored) { JSONBIN_BIN_ID = stored; return stored; }
-  return null;
-}
-
 function loadFromCloud() {
-  var binId = getBinId();
-  if (!binId) {
-    // No bin yet — start fresh
+  // If credentials not set yet, just run locally
+  if (SUPABASE_URL.indexOf('PASTE') !== -1) {
+    var local = localStorage.getItem('trainState');
+    if (local) { try { var s=JSON.parse(local); if(s.days)state.days=s.days; if(s.meals)state.meals=s.meals; if(s.shop)state.shop=s.shop; if(s.tracker)state.tracker=s.tracker; if(s.currentWeek)state.currentWeek=s.currentWeek; if(typeof s.selectedDay==='number')state.selectedDay=s.selectedDay; } catch(e){} }
     document.getElementById('loading').classList.add('hidden');
     initUI();
     return;
   }
-  fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest', {
-    headers: { 'X-Master-Key': JSONBIN_API_KEY }
+  fetch(SUPABASE_URL + '/rest/v1/dashboard?id=eq.1&select=data', {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY
+    }
   })
   .then(function(r){ return r.json(); })
-  .then(function(data) {
-    if (data && data.record) {
-      var s = data.record;
+  .then(function(rows) {
+    if (rows && rows.length > 0 && rows[0].data) {
+      var s = JSON.parse(rows[0].data);
       if (s.days)        state.days        = s.days;
       if (s.meals)       state.meals       = s.meals;
       if (s.shop)        state.shop        = s.shop;
@@ -595,53 +594,48 @@ function loadFromCloud() {
     initUI();
   })
   .catch(function() {
-    // Cloud failed — fall back to localStorage
     var local = localStorage.getItem('trainState');
-    if (local) { try { state = JSON.parse(local); } catch(e){} }
+    if (local) { try { var s=JSON.parse(local); if(s.days)state.days=s.days; if(s.meals)state.meals=s.meals; if(s.shop)state.shop=s.shop; if(s.tracker)state.tracker=s.tracker; if(s.currentWeek)state.currentWeek=s.currentWeek; if(typeof s.selectedDay==='number')state.selectedDay=s.selectedDay; } catch(e){} }
     document.getElementById('loading').classList.add('hidden');
-    syncBar('Could not reach cloud — showing local data', 'error');
+    syncBar('Cloud unavailable — showing local data', 'error');
     initUI();
   });
 }
 
 function saveToCloud() {
-  syncBar('Saving...', 'saving');
   localStorage.setItem('trainState', JSON.stringify(state));
-  var binId = getBinId();
-  if (!binId) {
-    // Create a new bin
-    fetch('https://api.jsonbin.io/v3/b', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': JSONBIN_API_KEY,
-        'X-Bin-Name': 'training-dashboard'
-      },
-      body: JSON.stringify(state)
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(data) {
-      if (data && data.metadata && data.metadata.id) {
-        JSONBIN_BIN_ID = data.metadata.id;
-        localStorage.setItem(LOCALSTORAGE_BIN_KEY, JSONBIN_BIN_ID);
-        syncBar('Saved & synced ✓', 'saved');
-      } else {
-        syncBar('Sync error — saved locally only', 'error');
-      }
-    })
-    .catch(function(){ syncBar('Sync error — saved locally only', 'error'); });
-  } else {
-    fetch('https://api.jsonbin.io/v3/b/' + binId, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': JSONBIN_API_KEY
-      },
-      body: JSON.stringify(state)
-    })
-    .then(function(){ syncBar('Saved & synced ✓', 'saved'); })
-    .catch(function(){ syncBar('Sync error — saved locally only', 'error'); });
-  }
+  if (SUPABASE_URL.indexOf('PASTE') !== -1) return; // no credentials yet
+  syncBar('Saving...', 'saving');
+  var payload = JSON.stringify({ data: JSON.stringify(state) });
+  // Try update first (upsert row id=1)
+  fetch(SUPABASE_URL + '/rest/v1/dashboard?id=eq.1', {
+    method: 'PATCH',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    },
+    body: payload
+  })
+  .then(function(r) {
+    if (r.status === 200 || r.status === 204) {
+      syncBar('Saved & synced ✓', 'saved');
+    } else {
+      // Row doesn't exist yet — insert it
+      return fetch(SUPABASE_URL + '/rest/v1/dashboard', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ id: 1, data: JSON.stringify(state) })
+      }).then(function(){ syncBar('Saved & synced ✓', 'saved'); });
+    }
+  })
+  .catch(function(){ syncBar('Sync error — saved locally only', 'error'); });
 }
 
 function save() {
